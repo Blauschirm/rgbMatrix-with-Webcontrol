@@ -38,12 +38,20 @@ Application = tornado.web.Application([
 	(r'/ws', WSHandler),
 ], **settings)
 
-def StartWebsocket():
+def StartWebsocket(*args, **kwargs):
+	port=8000
 	http_server = tornado.httpserver.HTTPServer(Application)
-	http_server.listen(8000)
+	http_server.listen(port)
 	myIP = socket.gethostbyname(socket.gethostname())
 	print('*** Websocket Server Started at %s***' % myIP)
-	tornado.ioloop.IOLoop.instance().start()
+	tornado.ioloop.IOLoop.current().start()
+	print("Websocket stopped.")
+
+def StopWebsocket():
+    ioloop = tornado.ioloop.IOLoop.instance()
+    ioloop.add_callback(ioloop.stop)
+    print("Stopping Websocket.")
+
 
 if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(Application)
