@@ -40,19 +40,22 @@ class LED:
 		self.green = int(green*hue)
 		self.blue = int(blue*hue)
         
-	def cast(self):
+	def serialize(self, output, index):
 		global sent
+        output = ""
 		if(self.green==1):
 			self.green+=1
-		ser.write((self.green).to_bytes(1, byteorder='little'))
+        output[index+1] = self.green.to_bytes(1, byteorder='little')
+		
 		sent+=1
 		if(self.red==1):
 			self.red+=1
-		ser.write((self.red).to_bytes(1, byteorder='little'))
+        
+        output[index+1] = self.red.to_bytes(1, byteorder='little')
 		sent+=1
 		if(self.blue==1):
 			self.blue+=1
-		ser.write((self.blue).to_bytes(1, byteorder='little'))
+		output[index+1] = self.blue.to_bytes(1, byteorder='little')
 		sent+=1
  
 def DisplayMedia(filepath,delay):
@@ -126,10 +129,12 @@ def Flush(Pixel_Matrix):
 
 	global sent
 	if(Preview):Windowspreviev()
+    output = bytes(16*16*3 + 1);
 	for n in range(16):
 		for m in range(16):
-			Pixel_Matrix[n][m].cast()
-	ser.write((1).to_bytes(1, byteorder='little'))
+			Pixel_Matrix[n][m].serialize(output, n*m*3)
+    output[16*16*3] = 0
+	ser.write(output)
 	sent+=1
 	
 if(debug):	
