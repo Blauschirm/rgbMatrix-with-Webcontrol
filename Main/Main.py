@@ -1,137 +1,37 @@
-import array, time, serial, os.path, threading
+import array, time, serial, os.path, threading, os, sys, socket, tornado.web, tornado.ioloop, tornado.websocket, tornado.httpserver
 from random import randint
 from subprocess import call
 from math import *
 from graphics import *
 from PIL import Image
 from timeit import default_timer as timer
-from WebSocket_lib import StartWebsocket
-from WebSocket_lib import StopWebsocket
+#import LED
+from LED import *#findmode, setMotiv, single,
+from Snake import *
 
-#mark1
-path = "C:/Users/Max/Pictures/Pixels/365/bmp/8.bmp"
-flappe = "C:/Users/Max/Pictures/Pixels/flappy"
-tetris = "C:/Users/Max/Pictures/Pixels/tetris"
-NyanCat = "C:/Users/Max/Pictures/Pixels/NyanCat/0.bmp"
-Link_walk = "C:/Users/Max/Pictures/Pixels/link-walk"
-LSD1 = "C:/Users/Max/Pictures/Pixels/LSD/rainbow-spiral/0.bmp"
-Gameboy = "C:/Users/Max/Pictures/Pixels/Gameboy/0.bmp"
-Lemmingsfall = "C:/Users/Max/Pictures/Pixels/Lemmings/Lemmingasfall"
-white = "C:/Users/Max/Pictures/Pixels/white.bmp"
-mushrooms = "C:/Users/Max/Pictures/Pixels/mushrooms"
-
+Serial=True
 debug=True
 Preview=False
-start = 0
+
 boxsize = 40
 cols = 16
 rows = 16
 hue = 1
-matrix = [[0 for x in range(cols)] for x in range(rows)]
-correcter = [[0 for x in range(cols)] for x in range(rows)]
-ser = serial.Serial('COM5', 1000000, timeout=0.1)
-if(Preview):win = GraphWin('lolz', 660, 660)
+framerate = 24
+port=8888
 
-class LED:
+start = 0
+mode=1
 
-	def __init__(self, red, green, blue):
-		self.red = int(red*hue)
-		self.green = int(green*hue)
-		self.blue = int(blue*hue)
-        
-	def cast(self, output):
-		global sent
-		if(self.green==1):
-			self.green+=1
-		output.append((self.green))
-		
-		if(self.red==1):
-			self.red+=1
-		output.append((self.red))
-		
-		if(self.blue==1):
-			self.blue+=1
-		output.append((self.blue))
- 
-def DisplayMedia(filepath,delay):
+direction=None
 
-	def CopytoMatrix(active_frame,step,pos):
-		for n in range(cols):
-			for m in range(rows):
-				col = active_frame[n,m+step*pos]
-				matrix[n][m] = LED((col[0]), col[1], col[2])
-		Flush(matrix)	
-	def vertical():
-		framenumber = round(height)/16
-		framenumber_int = int(framenumber)
-		if(width % 16==0):
-			if(height % 16==0):
-				while(1):
-					try:
-						for i in range(framenumber_int):
-							CopytoMatrix(px,16,i)
-							time.sleep(delay)
-					except KeyboardInterrupt:
-						break
-			else:
-				print("Hoehe passt nicht")
-		else:
-			print("Breite passt nicht")
-	def multiple():
-		pos=0
-		while(1):
-			try:
-				picname=(str(pos)+".bmp")
-				complete_filepath = filepath + "/" + picname
-				if((os.path.exists(complete_filepath))==False):
-					pos=0
-					timeitend()
-					timeitstart()
-				else:
-					print(picname)
-					Picture=Image.open(complete_filepath)
-					px = Picture.load()
-					CopytoMatrix(px,0,1)
-					pos+=1
-					time.sleep(delay)
-			except KeyboardInterrupt:
-				break
-	def single():
-		Picture=Image.open(filepath)
-		px = Picture.load()
-		CopytoMatrix(px,0,1)
-		
-	if(filepath[-4:] == ".bmp"):	
-		Picture=Image.open(filepath)
-		px = Picture.load()
-		width,height = Picture.size
-		if(height>16):
-			mode = vertical()
-		elif(width>16):
-			mode = horizontal()
-		else:
-			mode=single()
-	else:
-		mode=multiple()
-	
-def Windowspreviev():
-	for i in range(16):													
-		for j in range(16):  
-			Rect = Rectangle(Point((3+i*boxsize),(3+j*boxsize)), Point((boxsize+3+i*boxsize), (boxsize+3+j*boxsize)))
-			color = color_rgb(matrix[i][j].red,matrix[i][j].green,matrix[i][j].blue)
-			Rect.setFill(color)
-			Rect.draw(win) 
-								
-def Flush(Pixel_Matrix):
-	output=bytearray()
-	if(Preview):Windowspreviev()
-	for n in range(cols):
-		for m in range(rows):
-			Pixel_Matrix[n][m].cast(output)
-	output.append(1)
-	ser.write(output)
 
-	
+
+settings = {
+    "static_path": os.path.join(os.path.dirname(__file__), "static"),
+}
+
+
 def timeitstart():
 	global start
 	if(debug):	start = timer()
@@ -141,21 +41,92 @@ def timeitend():
 		print(end - start)
 		print("for this frame")
 	
+class WSHandler(tornado.websocket.WebSocketHandler):
+	global direction, Media, CurrentDisplay
 	
+	def check_origin(self, origin):
+		return True
 
-#t = threading.Thread(target=StartWebsocket(8000))  
-#t.start()
+	def open(self):
+		global CurrentDisplay
+		print('new connection')
+		
+	def on_message(self, message):
+		global CurrentDisplay
+		#print('message received:  %s' % message)
+		if(message=="lolz"):
+			CurrentDisplay.stop()
+			print("stopped")
+		elif(message[:3]=="dir"):
+			#print("dir detected")
+			direction=message[3:]
+			print(direction)
+			setDir(direction)
+		elif(message[:5]=="media"):
+			Media=message[5:]
+			print(Media)
+			if(isinFiles(Media)):
+				mode=findmode(Media)
+				fps=findfps(Media)
+				CurrentDisplay.stop()
+				CurrentDisplay = setPeriodicCallback(Media, findmode(Media), fps)
+				CurrentDisplay.start()
+		elif(message[:4]=="game"):
+			game=message[4:]
+			if(game=="snake"):
+				SnakeRST()
+				delay=1000/24
+				CurrentDisplay.stop()
+				CurrentDisplay = tornado.ioloop.PeriodicCallback(snake, delay)
+				CurrentDisplay.start()
+			
+	def on_close(self):
+		print('connection closed')	
 
-DisplayMedia(LSD1,0.03)
+ 
+class MainHandler(tornado.websocket.WebSocketHandler):
+	def check_origin(self, origin):
+		return True
+	def get(self):
+		self.render("index.html")
 
-#StopWebsocket()
-#t.join()
+def StartWebsocket(port):
+	http_server = tornado.httpserver.HTTPServer(Application)
+	http_server.listen(port)
+	myIP = socket.gethostbyname(socket.gethostname())
+	if debug: print('*** Websocket Server Started at {0}:{1}***'.format(myIP,port))
+	tornado.ioloop.IOLoop.instance().start()
+	if debug: print("Websocket stopped.")
 
+def StopWebsocket():
+    ioloop = tornado.ioloop.IOLoop.instance()
+    ioloop.add_callback(ioloop.stop)
+    if debug: print("Stopping Websocket...")
+		
+Application = tornado.web.Application([
+	(r"/", MainHandler),
+	(r'/ws', WSHandler),
+], **settings)
 
-#StartWebsocket(8000)
-
-
-ser.close() 
-if(Preview):
-	win.getMouse()
-	win.close()
+def setPeriodicCallback(Media, mode, fps = None):
+	if(fps==None):fps=24
+	setMotiv(Media,mode)
+	delay = int(1000/findfps(Media))
+	if(mode==1):
+		CurrentDisplay = tornado.ioloop.PeriodicCallback(single, delay)
+		return CurrentDisplay
+	elif(mode==2): 
+		CurrentDisplay = tornado.ioloop.PeriodicCallback(vertical, delay)
+		return CurrentDisplay
+	elif(mode==4):
+		CurrentDisplay = tornado.ioloop.PeriodicCallback(multiple, delay)
+		return CurrentDisplay
+	elif(mode==3):
+		CurrentDisplay = tornado.ioloop.PeriodicCallback(horizontal, delay)
+		return CurrentDisplay
+	else: print("Unknown mode.")
+	
+CurrentDisplay = setPeriodicCallback("mario", 1, 1)
+CurrentDisplay.start()
+			
+StartWebsocket(port)
