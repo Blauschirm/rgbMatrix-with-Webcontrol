@@ -10,7 +10,7 @@ rows = 16
 start=time.time()
 snakexy=collections.deque()
 foodxy=(0,0)
-snakelength=3
+snakelength = 3
 matrix = [[0 for x in range(cols)] for x in range(rows)]
 x=2
 y=2
@@ -20,7 +20,7 @@ def SnakeRST():
 	foodxy=(randint(0,15), randint(0,15))
 	x=0
 	y=0
-	matrix = FillBlack(matrix)
+	matrix = Fill(matrix,0,0,0)
 	snakexy.clear()
 	snakexy.append((0,8))
 	direction='r'
@@ -38,22 +38,24 @@ def setDir(tbdir):
 	
 
 def snake():
+	global snakexy
+
 	def GameOver():
 		global matrix
+		print("Score: {}".format(snakelength))
 		for i in range(2):
-			matrix = FillBlack(matrix)
+			matrix = Fill(matrix,0,0,0)
 			Flush(matrix)
-			print("dark")
 			time.sleep(0.5)	
 			for i in range(len(snakexy)):
 				x,y = snakexy[i]
-				matrix[x][y]=LED(0,255,0)	
+				matrix[x][y]=LED(0+75*(sin(i)+1),255,0)	
 			Flush(matrix)
-			print("white")
 			time.sleep(0.5)	
 	
-	global x,y,matrix, start, direction, snakelength, foodxy, lastdir
+	global snakelength, x,y,matrix, start, direction, foodxy, lastdir
 	if(time.time()-start>=0.1):
+		gefressen = False
 		newFrame=True
 		start=time.time()
 		x,y=snakexy[-1]
@@ -65,30 +67,30 @@ def snake():
 			print("Game Over, boundries")
 			GameOver()
 			SnakeRST()
-			
-		elif(snakexy.count((x,y))>0):
-			print("Game Over, self")
-			GameOver()
-			SnakeRST()
-
 		else:
 			if((x,y)==foodxy):
 				snakelength += 1
+				gefressen = True
 				foodxy=(randint(0,15), randint(0,15))
 				while(snakexy.count(foodxy)>0):
 					foodxy=(randint(0,15), randint(0,15))
 			lastdir=direction
-	
-			snakexy.append((x,y))
-			if(len(snakexy)>snakelength):
-				snakexy.popleft()
-							
-			matrix = FillBlack(matrix)
+			#snakexy.append((x,y))
+			if(len(snakexy)>=snakelength):
+				if(gefressen==False):
+					snakexy.popleft()
+			if(snakexy.count((x,y))>0):
+				print("Game Over, self")
+				GameOver()
+				SnakeRST()
+			snakexy.append((x,y))							
+			matrix = Fill(matrix,0,0,0)
 			x,y=foodxy
 			matrix[x][y]=LED(100,255,100)
 			for i in range(len(snakexy)):
 				x,y = snakexy[i]
-				matrix[x][y]=LED(0,255,0)		
+				
+				matrix[x][y]=LED(0+75*(sin(i)+1),255,0)		
 			Flush(matrix)
 			
 

@@ -1,8 +1,9 @@
+#!/usr/bin/python
 import array, time, serial, os.path, os, sys
 from random import randint
 from subprocess import call
 from math import *
-from graphics import *
+#from graphics import *
 from timeit import default_timer as timer
 from PIL import Image
 
@@ -24,12 +25,18 @@ Preview=False
 #mushrooms = "C:/Users/Max/Pictures/Pixels/mushrooms"
 #outrun ="C:\\Users\\Max\\Pictures\\Pixels\\365\\365daypixelartchallenge\\0.bmp"
 
+def hex_to_rgb(value):
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
+background=(255,255,255)
+#background=hex_to_rgb("#F58DF2")
 start = 0
 boxsize = 40
 cols = 16
 rows = 16
-hue = 0.1
+hue = 1
 matrix = [[0 for x in range(cols)] for x in range(rows)]
 correcter = [[0 for x in range(cols)] for x in range(rows)]
 if(Preview):win = GraphWin('lolz', 660, 660)
@@ -38,13 +45,13 @@ Motiv=''
 lenght_validated=False
 pos=0
 framenumber_int=1
+Picpath = os.path.dirname(os.path.abspath(sys.argv[0])) + "/static/Images/Pixels"
 
 
 
 
 
-
-if Serial : ser = serial.Serial('COM6', 1000000, timeout=0.1)
+if Serial : ser = serial.Serial('/dev/ttyAMA0', 1000000, timeout=0.1)
 
 
 
@@ -71,10 +78,10 @@ class Media:
 		self.mode = mode
 		
 Files={
-	"mario" : Media(os.path.dirname(os.path.abspath(sys.argv[0])) + "\\Mario.bmp",1),
-	"flappe" : Media("C:\\Users\\Max\\Pictures\\Pixels\\flappy",None,5),
-	"nyancat" : Media("C:/Users/Max/Pictures/Pixels/NyanCat/0.bmp",None,15),
-	"tetris" : Media("C:/Users/Max/Pictures/Pixels/tetris",None,24)
+	"mario" : Media(os.path.dirname(os.path.abspath(sys.argv[0])) + "/Mario.bmp",1),
+	"flappe" : Media(Picpath + "/flappy",None,5),
+	"nyancat" : Media(Picpath + "/NyanCat/0.bmp",None,4),
+	"tetris" : Media(Picpath + "/tetris",None,12)
 }
 
 Media=Files["mario"]
@@ -128,12 +135,20 @@ def CopytoMatrix(active_frame,step, posi):
 			matrix[n][m] = LED((col[0]), col[1], col[2])
 	Flush(matrix)	
 	
-def FillBlack(matrix):
+def Fill(matrix,r,g,b):
 	for n in range(cols):
 		for m in range(rows):
-			matrix[n][m] = LED(0,0,0)
+			matrix[n][m] = LED(r,g,b)
 	return matrix
-	
+
+def singlecolor():
+	global background
+	r,g,b=background
+	for n in range(cols):
+		for m in range(rows):
+			matrix[n][m] = LED(r,g,b)
+	Flush(matrix)
+
 def vertical():
 	global framenumber_int
 	global px
