@@ -5,6 +5,7 @@ var ws;
 var frame = new Array(756); 
 
 $(document).ready(function() {
+	newWS();
 	$(document).keydown(function(e) {
 		switch(e.which) {
 			case 37: // left
@@ -49,7 +50,7 @@ function refreshCanvas(frame) {
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
 	ctx.clearRect(0, 0, c.width, c.height);
-	ctx.fillStyle="lightgrey";
+	ctx.fillStyle="black";
 	ctx.fillRect(0,0,c.width,c.height);
 	rectsize = parseInt(c.width/16);
 	k=0;
@@ -60,28 +61,21 @@ function refreshCanvas(frame) {
 			k+=3;
 		}
 	}
-	
 }
 
-
-openButton.onclick = function() {
+function newWS() {
 	if ("WebSocket" in window) {
 		var url = "ws://" + location.host + "/ws";
 		ws = new WebSocket(url);
+		ws.binaryType = "arraybuffer";
 		ws.onopen = function() {
 			//alert("Connection is open...");
 			initCanvas();
 		};
 		ws.onmessage = function (evt) { 
 			var received_msg = evt.data;
-			if (received_msg.substring(0, 5) == "frame") {
-				tmp = received_msg.substring(6);
-				console.log(tmp.length);
-				for (i=0;i<768;i++){
-					frame[i]=tmp.charCodeAt(i)
-				}
-				console.log(frame)
-				
+			if(evt.data instanceof ArrayBuffer){
+				var frame = new Uint8Array(event.data);
 				refreshCanvas(frame);
 			}
 		};
@@ -92,10 +86,6 @@ openButton.onclick = function() {
 	}
 }
 
-closerButton.onclick = function() {
-	//alert("closing");
-	ws.close()
-}
 
 send1.onclick = function() {
 	ws.send("gamesnake");
@@ -109,10 +99,9 @@ send3.onclick = function() {
 send4.onclick = function() {
 	ws.send("mediaflappe");
 }
-sendframe.onclick = function() {
+test.onclick = function(){
 	ws.send("test");
 }
-
 function newMessage(form) {
     var message = form.formToDict();
     ws.send(JSON.stringify(message));

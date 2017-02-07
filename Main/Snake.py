@@ -15,6 +15,7 @@ matrix = [[0 for x in range(cols)] for x in range(rows)]
 x=2
 y=2
 
+
 def SnakeRST():
 	global x,y, direction, start, snakexy, matrix, foodxy, snakelength, lastdir
 	foodxy=(randint(0,15), randint(0,15))
@@ -89,7 +90,6 @@ def snake():
 			matrix[x][y]=LED(100,255,100)
 			for i in range(len(snakexy)):
 				x,y = snakexy[i]
-				
 				matrix[x][y]=LED(0+75*(sin(i)+1),255,0)		
 			Flush(matrix)
 			

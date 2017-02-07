@@ -11,6 +11,7 @@ from timeit import default_timer as timer
 from LED import *#findmode, setMotiv, single,
 from Snake import *
 from random import randint
+from os import urandom
 
 
 
@@ -47,13 +48,19 @@ def timeitend():
     
 class WSHandler(tornado.websocket.WebSocketHandler):
     global direction, Media, CurrentDisplay
-    
+
+    def get_compression_options(self):
+        # Non-None enables compression with default options.
+        return {"permessage-deflate"}
+
     def check_origin(self, origin):
         return True
 
     def open(self):
         global CurrentDisplay
         print('new connection')
+        setWSH(self)
+        self.set_nodelay(True)
         
     def on_message(self, message):
         global CurrentDisplay
@@ -63,15 +70,22 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             print("stopped")
         elif(message=="test"):
             frame=[randint(0,255) for x in range(768)]
-            frame_chr = []
-            for i in frame:
-                frame_chr.append(chr(frame[i]))
-                print(frame[i])
-            frame_str = "frame" + ''.join(frame_chr)
-            self.write_message(frame_str, binary=False)
+           # frame_chr = []
+            #for i in frame:
+             #   frame_chr.append(chr(frame[i]))
+            #    print(frame[i])
+           # frame_str = "frame" + ''.join(frame_chr)
+           # self.write_message(frame_str, binary=False)
+            print("test")
+            print(frame)
+            #btest = bytearray(os.urandom(768))
+            #print(btest)
+            #bteste = btest.decode('latin-1')
+            self.write_message(bytes(frame), binary=True)
+            print(self.get_compression_options())
 
 
-        elif(message[:3]=="dir"):
+        elif(message[:3]=="dir"): 
             #print("dir detected")
             direction=message[3:]
             #print(direction)
@@ -95,7 +109,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 CurrentDisplay.start()
             
     def on_close(self):
-        print('connection closed')    
+        print('connection closed')
+        setWSH(None)    
 
 class MainHandler(tornado.websocket.WebSocketHandler):
     def check_origin(self, origin):
@@ -121,8 +136,8 @@ Application = tornado.web.Application([
     (r'/ws', WSHandler),
 ], **settings)
 
-def setPeriodicCallback(Media, mode, fps = None):
-    if(fps==None):fps=24
+def setPeriodicCallback(Media, mode, requested_fps = 24):
+    fps=requested_fps
     if(Media!=None): 
         setMotiv(Media,mode)
         fps = findfps(Media)
