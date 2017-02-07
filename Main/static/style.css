@@ -52,3 +52,8 @@ img {
   display: block;
   margin: 0 auto;
 }
+
+canvas {
+  display: block;
+  margin: 16px auto;
+}

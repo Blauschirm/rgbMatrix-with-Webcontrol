@@ -11,28 +11,18 @@
   </head>
   <body>
     <h1>Matrixcontrolpanel</h1> <br>
-	<h2>PrepreAlpha</h2>
+	  <h2>PrepreAlpha</h2>
+
+    <canvas id="myCanvas" width="513" height="513"></canvas>
+
     <button id="opener">open connection</button>
-	<button id="closer">close connection</button>
+	  <button id="closer">close connection</button>
     <button id="send1">Start Snake</button>
     <button id="send2">NyanCat</button>
     <button id="send3">Tetris</button>
     <button id="send4">Flappy Bird</button>
+    <button id="sendframe">Test Canvas</button>
     <input type="text"></input>
-    <!--<div id="input">
-        <form action="/a/message/new" method="post" id="messageform">
-          <table>
-            <tr>
-              <td><input name="body" id="message" style="width:500px"></td>
-              <td style="padding-left:5px">
-                <input type="submit" value="{{ _("Post") }}">
-                <input type="hidden" name="next" value="{{ request.path }}">
-                {% module xsrf_form_html() %}
-              </td>
-            </tr>
-          </table>
-        </form>
-      </div>-->
        <script src="{{ static_url('scripts/main.js') }}"></script>
 	</body>
 </html>

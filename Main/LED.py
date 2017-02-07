@@ -6,10 +6,17 @@ from math import *
 #from graphics import *
 from timeit import default_timer as timer
 from PIL import Image
+from sys import platform
 
-Serial=True
 debug=True
 Preview=False
+
+if platform == "linux" or platform == "linux2":
+	Serial = True
+	print("Detected Linux OS, starting with serial enabled.")
+else:
+	Serial = False
+	print("Detected Windows, starting without serial output.")
 
 
 #mark1
