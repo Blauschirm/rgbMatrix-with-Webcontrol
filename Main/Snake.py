@@ -113,12 +113,29 @@ def writeHighscore(score, name):
 	rank=0
 
 	def writetofile(path, Scores):
-		if not os.path.exists(basepath):
-				os.makedirs(basepath)		
+
+		def supermakedirs(path, mode):
+			if not path or os.path.exists(path):
+				return []
+			(head, tail) = os.path.split(path)
+			res = supermakedirs(head, mode)
+			os.mkdir(path)
+			os.chmod(path, mode)
+			print("set permission to {}".format(mode))
+			res += [path]
+			return res
+
+		if not os.path.exists(basepath):		
+			if platform == "linux" or platform == "linux2":
+				supermakedirs(basepath, 0o755)
+			else:
+				os.makedirs(basepath)
+
 		with open(fullpath,mode='w+') as rawScores:
 			for Score in Scores:
 				tmp = str(Score[0]) + ',' + strftime("%X %x",Score[1]) + ',' + Score[2] + '\n'
 				rawScores.write(tmp)
+
 
 	basepath= os.path.join(os.path.dirname(__file__), 'saves')
 	fullpath = os.path.join(basepath, "snake.txt")
@@ -138,5 +155,6 @@ def writeHighscore(score, name):
 	rank = len(Scores) + 1
 	writetofile(fullpath, Scores)
 	return rank
-
-writeHighscore(4,"test")
+	
+if(__name__=="__main__"):
+		writeHighscore(4,"test")
