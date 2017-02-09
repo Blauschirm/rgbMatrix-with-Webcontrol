@@ -112,7 +112,9 @@ def readHighscores(path):
 def writeHighscore(score, name):
 	rank=0
 
-	def writetofile(path, Scores):		
+	def writetofile(path, Scores):
+		if not os.path.exists(basepath):
+				os.makedirs(basepath)		
 		with open(fullpath,mode='w+') as rawScores:
 			for Score in Scores:
 				tmp = str(Score[0]) + ',' + strftime("%X %x",Score[1]) + ',' + Score[2] + '\n'
@@ -129,8 +131,6 @@ def writeHighscore(score, name):
 			Scores.insert(index,newScore)
 			rank = index + 1
 			Scores=Scores[:100]
-			if not os.path.exists(basepath):
-				os.makedirs(basepath)
 			writetofile(fullpath, Scores)
 			return rank
 
