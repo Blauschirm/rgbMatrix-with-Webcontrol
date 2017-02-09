@@ -6,10 +6,17 @@ from math import *
 #from graphics import *
 from timeit import default_timer as timer
 from PIL import Image
+from sys import platform
 
-Serial=True
 debug=True
 Preview=False
+
+if platform == "linux" or platform == "linux2":
+	Serial = True
+	print("Detected Linux OS, starting with serial enabled.")
+else:
+	Serial = False
+	print("Detected Windows, starting without serial output.")
 
 
 #mark1
@@ -57,28 +64,25 @@ if Serial : ser = serial.Serial('/dev/ttyAMA0', 1000000, timeout=0.1)
 
 
 class Media:
-	def __init__(self, path, mode, fps=None):
-		self.path = path
-		self.mode = mode
-		if(fps): 
-			self.fps=fps
-		else: 
-			self.fps=24
-			
-	def getpath(self):
-		return self.path
-		
-	def getfps(self):
-		return self.fps
-		
-	def getmode(self):
-		return self.mode
-		
-	def setmode(self, mode):
-		self.mode = mode
+    def __init__(self, path, mode, requestedfps):
+        self.path = path
+        self.mode = mode
+        self.fps = requestedfps
+            
+    def getpath(self):
+        return self.path
+        
+    def getfps(self):
+        return self.fps
+        
+    def getmode(self):
+        return self.mode
+        
+    def setmode(self, mode):
+        self.mode = mode
 		
 Files={
-	"mario" : Media(os.path.dirname(os.path.abspath(sys.argv[0])) + "/Mario.bmp",1),
+	"mario" : Media(os.path.dirname(os.path.abspath(sys.argv[0])) + "/Mario.bmp",None,1),
 	"flappe" : Media(Picpath + "/flappy",None,5),
 	"nyancat" : Media(Picpath + "/NyanCat/0.bmp",None,4),
 	"tetris" : Media(Picpath + "/tetris",None,12)
@@ -87,6 +91,13 @@ Files={
 Media=Files["mario"]
 path=Media.getpath()
 px = Image.open(path).load()
+WSH = None
+
+
+def setWSH(WSHandler):
+	global WSH
+	WSH = WSHandler
+	
 
 class LED:
 	def __init__(self, red, green, blue):
@@ -229,15 +240,28 @@ def findmode(Motiv):
 	else:
 		return Media.getmode()
 	
+
+
 def Flush(Pixel_Matrix):
 	global ser
-	output=bytearray()
-	if(Preview):Windowspreviev()
+	global WSH
+	soutput=bytearray()
+	woutput = []
+
 	for n in range(cols):
 		for m in range(rows):
-			output=Pixel_Matrix[n][m].cast(output, hue)
-	output.append(1)
-	if(Serial):ser.write(output)
+			soutput=Pixel_Matrix[n][m].cast(soutput, hue)
+	soutput.append(1)
+	if(Serial):ser.write(soutput)
+
+	for m in range (cols):
+		for n in range(rows):
+			woutput.append(Pixel_Matrix[n][m].red)
+			woutput.append(Pixel_Matrix[n][m].green)
+			woutput.append(Pixel_Matrix[n][m].blue)
+	if(WSH): WSH.write_message(bytes(woutput), binary=True)
+
+
 
 def Windowspreviev():
 	for i in range(16):													
