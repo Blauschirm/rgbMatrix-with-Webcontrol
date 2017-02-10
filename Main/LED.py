@@ -12,11 +12,11 @@ debug=True
 Preview=False
 
 if platform == "linux" or platform == "linux2":
-	Serial = True
-	print("Detected Linux OS, starting with serial enabled.")
+    Serial = True
+    print("Detected Linux OS, starting with serial enabled.")
 else:
-	Serial = False
-	print("Detected Windows, starting without serial output.")
+    Serial = False
+    print("Detected Windows, starting without serial output.")
 
 
 #mark1
@@ -80,12 +80,12 @@ class Media:
         
     def setmode(self, mode):
         self.mode = mode
-		
+        
 Files={
-	"mario" : Media(os.path.dirname(os.path.abspath(sys.argv[0])) + "/Mario.bmp",None,1),
-	"flappe" : Media(Picpath + "/flappy",None,5),
-	"nyancat" : Media(Picpath + "/NyanCat/0.bmp",None,4),
-	"tetris" : Media(Picpath + "/tetris",None,12)
+    "mario" : Media(os.path.dirname(os.path.abspath(sys.argv[0])) + "/Mario.bmp",None,1),
+    "flappe" : Media(Picpath + "/flappy",None,5),
+    "nyancat" : Media(Picpath + "/NyanCat/0.bmp",None,4),
+    "tetris" : Media(Picpath + "/tetris",None,12)
 }
 
 Media=Files["mario"]
@@ -95,202 +95,192 @@ WSH = None
 
 
 def setWSH(WSHandler):
-	global WSH
-	WSH = WSHandler
-	
+    global WSH
+    WSH = WSHandler
+
 
 class LED:
-	def __init__(self, red, green, blue):
-		self.red = int(red)
-		self.green = int(green)
-		self.blue = int(blue)
-     
-	def cast(self, out, hue):
-		output=bytearray()
-		output=out
-		self.green=int(self.green*hue)
-		if(self.green==1):
-			self.green+=1
-		output.append((self.green))
-		
-		self.red=int(self.red*hue)
-		if(self.red==1):
-			self.red+=1
-		output.append((self.red))
-		
-		self.blue=int(self.blue*hue)
-		if(self.blue==1):
-			self.blue+=1
-		output.append((self.blue))
-		return output
+    def __init__(self, red, green, blue):
+        self.red = int(red)
+        self.green = int(green)
+        self.blue = int(blue)
+
+    def cast(self, out, hue):
+        output=bytearray()
+        output=out
+        self.green=int(self.green*hue)
+        if(self.green==1):
+            self.green+=1
+        output.append((self.green))
+        
+        self.red=int(self.red*hue)
+        if(self.red==1):
+            self.red+=1
+        output.append((self.red))
+        
+        self.blue=int(self.blue*hue)
+        if(self.blue==1):
+            self.blue+=1
+        output.append((self.blue))
+        return output
 
 def findfps(Motiv):
-	return Files[Motiv].getfps()
+    return Files[Motiv].getfps()
 
 def setBools(Serialbool, Debugbool, previewbool):
-	Serial = Serialbool
-	debu = Debugbool
-	Preview = previewbool
+    Serial = Serialbool
+    debu = Debugbool
+    Preview = previewbool
 
 def isinFiles(Motiv):
-	if Motiv in Files:
-		return True
-	else:
-		return False
+    if Motiv in Files:
+        return True
+    else:
+        return False
 
 def CopytoMatrix(active_frame,step, posi):
-	global matrix
-	for n in range(cols):
-		for m in range(rows):
-			col = active_frame[n,m+step*posi]
-			matrix[n][m] = LED((col[0]), col[1], col[2])
-	Flush(matrix)	
-	
+    global matrix
+    for n in range(cols):
+        for m in range(rows):
+            col = active_frame[n,m+step*posi]
+            matrix[n][m] = LED((col[0]), col[1], col[2])
+    Flush(matrix)	
+    
 def Fill(matrix,r,g,b):
-	for n in range(cols):
-		for m in range(rows):
-			matrix[n][m] = LED(r,g,b)
-	return matrix
+    for n in range(cols):
+        for m in range(rows):
+            matrix[n][m] = LED(r,g,b)
+    return matrix
 
 def singlecolor():
-	global background
-	r,g,b=background
-	for n in range(cols):
-		for m in range(rows):
-			matrix[n][m] = LED(r,g,b)
-	Flush(matrix)
+    global background
+    r,g,b=background
+    for n in range(cols):
+        for m in range(rows):
+            matrix[n][m] = LED(r,g,b)
+    Flush(matrix)
 
 def vertical():
-	global framenumber_int
-	global px
-	global pos
-	CopytoMatrix(px,16,pos)
-	if(pos==framenumber_int): pos=0
-	else: pos=pos+1
-	
+    global framenumber_int
+    global px
+    global pos
+    CopytoMatrix(px,16,pos)
+    if(pos==framenumber_int): pos=0
+    else: pos=pos+1
+    
 def multiple():
-	global pos, Motiv
-	global framenumber_int
-	global lenght_validated
+    global pos, Motiv
+    global framenumber_int
+    global lenght_validated
 
-	if(lenght_validated):
-		if(pos==framenumber_int):
-			pos=0
-		picname=(str(pos)+".bmp")
-		complete_filepath = Files[Motiv].getpath() + "/" + picname
-		print(picname)
-		Picture=Image.open(complete_filepath)
-		px = Picture.load()
-		CopytoMatrix(px,0,1)
-		pos+=1
-	else:
-		picname=(str(pos)+".bmp")
-		complete_filepath = Files[Motiv].getpath() + "/" + picname
-		if((os.path.exists(complete_filepath))==False):
-			framenumber_int=pos
-			lenght_validated=True
-			pos=0
-		else:
-			print(picname)
-			Picture=Image.open(complete_filepath)
-			px = Picture.load()
-			CopytoMatrix(px,0,1)
-			pos+=1
-			
+    if(lenght_validated):
+        if(pos==framenumber_int):
+            pos=0
+        picname=(str(pos)+".bmp")
+        complete_filepath = Files[Motiv].getpath() + "/" + picname
+        print(picname)
+        Picture=Image.open(complete_filepath)
+        px = Picture.load()
+        CopytoMatrix(px,0,1)
+        pos+=1
+    else:
+        picname=(str(pos)+".bmp")
+        complete_filepath = Files[Motiv].getpath() + "/" + picname
+        if((os.path.exists(complete_filepath))==False):
+            framenumber_int=pos
+            lenght_validated=True
+            pos=0
+        else:
+            print(picname)
+            Picture=Image.open(complete_filepath)
+            px = Picture.load()
+            CopytoMatrix(px,0,1)
+            pos+=1
+            
 def single():
-	global px
-	
-	CopytoMatrix(px,0,1)
-	
+    global px
+    
+    CopytoMatrix(px,0,1)
+    
 def findmode(Motiv):
-	global px, pos, framenumber_int
-	pos=0
-	lenght_validated = False
-	Media = Files[Motiv]
-	if(Media.getmode()==None):
-		if(Media.getpath()[-4:] == ".bmp"):	
-			Picture = Image.open(Files[Motiv].getpath())
-			px = Picture.load()
-			width,height = Picture.size
-			if(height%16 == 0 and width%16 ==0):
-				if(height>16 and width==16):
-					framenumber = height/16-1
-					framenumber_int = int(framenumber)
-					Media.setmode=2
-					return 2 #vertical()
-				elif(width>16 and height==16):
-					framenumber = width/16-1
-					framenumber_int = int(framenumber)
-					Media.setmode=3
-					return 3 #horizontal()
-				elif(height==16 and width==16):
-					Media.setmode=1
-					return 1 #single
-		else:
-			picname=(str(0)+".bmp")
-			complete_filepath = Files[Motiv].getpath() + "/" + picname
-			Picture = Image.open(complete_filepath)
-			px = Picture.load()
-			width,height = Picture.size
-			if(width==16 and height==16):
-				Media.setmode=4
-				return 4 #multiple()
-		print("Filepath not valid")
-		return 0
-	else:
-		return Media.getmode()
-	
+    global px, pos, framenumber_int
+    pos=0
+    lenght_validated = False
+    Media = Files[Motiv]
+    if(Media.getmode()==None):
+        if(Media.getpath()[-4:] == ".bmp"):	
+            Picture = Image.open(Files[Motiv].getpath())
+            px = Picture.load()
+            width,height = Picture.size
+            if(height%16 == 0 and width%16 ==0):
+                if(height>16 and width==16):
+                    framenumber = height/16-1
+                    framenumber_int = int(framenumber)
+                    Media.setmode=2
+                    return 2 #vertical()
+                elif(width>16 and height==16):
+                    framenumber = width/16-1
+                    framenumber_int = int(framenumber)
+                    Media.setmode=3
+                    return 3 #horizontal()
+                elif(height==16 and width==16):
+                    Media.setmode=1
+                    return 1 #single
+        else:
+            picname=(str(0)+".bmp")
+            complete_filepath = Files[Motiv].getpath() + "/" + picname
+            Picture = Image.open(complete_filepath)
+            px = Picture.load()
+            width,height = Picture.size
+            if(width==16 and height==16):
+                Media.setmode=4
+                return 4 #multiple()
+        print("Filepath not valid")
+        return 0
+    else:
+        return Media.getmode()
+    
 
 
 def Flush(Pixel_Matrix):
-	global ser
-	global WSH
-	soutput=bytearray()
-	woutput = []
+    global ser
+    global WSH
+    soutput=bytearray()
+    woutput = []
 
-	for n in range(cols):
-		for m in range(rows):
-			soutput=Pixel_Matrix[n][m].cast(soutput, hue)
-	soutput.append(1)
-	if(Serial):ser.write(soutput)
+    for n in range(cols):
+        for m in range(rows):
+            soutput=Pixel_Matrix[n][m].cast(soutput, hue)
+    soutput.append(1)
+    if(Serial):ser.write(soutput)
 
-	for m in range (cols):
-		for n in range(rows):
-			woutput.append(Pixel_Matrix[n][m].red)
-			woutput.append(Pixel_Matrix[n][m].green)
-			woutput.append(Pixel_Matrix[n][m].blue)
-	if(WSH): WSH.write_message(bytes(woutput), binary=True)
-
-
-
-def Windowspreviev():
-	for i in range(16):													
-		for j in range(16):  
-			Rect = Rectangle(Point((3+i*boxsize),(3+j*boxsize)), Point((boxsize+3+i*boxsize), (boxsize+3+j*boxsize)))
-			color = color_rgb(matrix [i][j].red,matrix[i][j].green,matrix[i][j].blue)
-			Rect.setFill(color)
-			Rect.draw(win) 
+    for m in range (cols):
+        for n in range(rows):
+            woutput.append(Pixel_Matrix[n][m].red)
+            woutput.append(Pixel_Matrix[n][m].green)
+            woutput.append(Pixel_Matrix[n][m].blue)
+    if(WSH): WSH.write_message(bytes(woutput), binary=True)
 
 def setMotiv(tbMotiv, mode):
-	global Motiv, px, pos, lenght_validated
-	Motiv = tbMotiv
-	lenght_validated=False
-	pos=0
-	if(mode==1 or mode== 2 or mode==3):
-		Picture = Image.open(Files[Motiv].getpath())
-		px = Picture.load()
+    global Motiv, px, pos, lenght_validated
+    Motiv = tbMotiv
+    lenght_validated=False
+    pos=0
+    if(mode==1 or mode== 2 or mode==3):
+        Picture = Image.open(Files[Motiv].getpath())
+        px = Picture.load()
 
-	
+    
 
 
 if(__name__=="__main__"):
-	tbMotiv="mario"							
-	RenderFrame(tbMotiv, findmode(tbMotiv))
-	if(Serial):ser.close() 
+    tbMotiv="mario"							
+    RenderFrame(tbMotiv, findmode(tbMotiv))
+    if(Serial):ser.close() 
 
 if(Preview):
-	win.getMouse()
-	win.close()
-	if(Serial):ser.close() 
+    win.getMouse()
+    win.close()
+    if(Serial):ser.close() 
 
 

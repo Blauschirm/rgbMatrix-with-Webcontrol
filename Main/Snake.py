@@ -1,160 +1,98 @@
-import LED
-from LED import *# Flush, FillBlack
-import time, collections, os
-from time import strftime, localtime, sleep, strptime
+""" Simple Snake Game """
+
+from collections import deque
+from math import sin
 from random import randint
-from tornado import gen
-from operator import itemgetter
+from time import sleep
 
-direction='r'
-lastdir='r'
-cols = 16
-rows = 16
-start=time.time()
-snakexy=collections.deque()
-foodxy=(0,0)
-snakelength = 3
-matrix = [[0 for x in range(cols)] for x in range(rows)]
-x=2
-y=2
-
-dir=os.path.dirname(__file__)
-
-def SnakeRST():
-	global x,y, direction, start, snakexy, matrix, foodxy, snakelength, lastdir
-	foodxy=(randint(0,15), randint(0,15))
-	x=0
-	y=0
-	matrix = Fill(matrix,0,0,0)
-	snakexy.clear()
-	snakexy.append((0,8))
-	direction='r'
-	lastdir='r'
-	start=time.time()
-	snakelength = 3
-
-def setDir(tbdir):
-	global direction, lastdir
-	if(tbdir=="r" and lastdir=="l"): return
-	if(tbdir=="l" and lastdir=="r"): return
-	if(tbdir=="u" and lastdir=="d"): return
-	if(tbdir=="d" and lastdir=="u"): return
-	direction=tbdir
-	
-
-def snake():
-	global snakexy
-
-	def GameOver():
-		global matrix
-		if(snakelength > 3):
-			rank = writeHighscore(snakelength,"max")
-			print("Rank {} with a score of {} points.".format(rank, snakelength))
-		for i in range(2):
-			matrix = Fill(matrix,0,0,0)
-			Flush(matrix)
-			time.sleep(0.5)	
-			for i in range(len(snakexy)):
-				x,y = snakexy[i]
-				matrix[x][y]=LED(0+75*(sin(i)+1),255,0)	
-			Flush(matrix)
-			time.sleep(0.5)	
-	
-	global snakelength, x,y,matrix, start, direction, foodxy, lastdir
-	if(time.time()-start>=0.1):
-		gefressen = False
-		newFrame=True
-		start=time.time()
-		x,y=snakexy[-1]
-		if(direction=='l'): x-=1
-		if(direction=='r'): x+=1
-		if(direction=='u'): y-=1
-		if(direction=='d'): y+=1
-		if(x<0 or x>15 or y<0 or y>15):
-			GameOver()
-			SnakeRST()
-		else:
-			if((x,y)==foodxy):
-				snakelength += 1
-				gefressen = True
-				foodxy=(randint(0,15), randint(0,15))
-				while(snakexy.count(foodxy)>0):
-					foodxy=(randint(0,15), randint(0,15))
-			lastdir=direction
-			#snakexy.append((x,y))
-			if(len(snakexy)>=snakelength):
-				if(gefressen==False):
-					snakexy.popleft()
-			if(snakexy.count((x,y))>0):
-				GameOver()
-				SnakeRST()
-			snakexy.append((x,y))							
-			matrix = Fill(matrix,0,0,0)
-			x,y=foodxy
-			matrix[x][y]=LED(100,255,100)
-			for i in range(len(snakexy)):
-				x,y = snakexy[i]
-				matrix[x][y]=LED(0+75*(sin(i)+1),255,0)		
-			Flush(matrix)
-			
-def readHighscores(path):
-	Scores=[]
-	if os.path.exists(path):
-		with open(path,mode='r') as rawScores:
-			for line in rawScores:
-				tmp=line.strip()
-				tmp=tmp.split(',')
-				tmp[0] = int(tmp[0])
-				tmp[1] = strptime(tmp[1], "%X %x")
-				Scores.append(tmp)
-	return(Scores)
-
-def writeHighscore(score, name):
-	rank=0
-
-	def writetofile(path, Scores):
-
-		def supermakedirs(path, mode):
-			if not path or os.path.exists(path):
-				return []
-			(head, tail) = os.path.split(path)
-			res = supermakedirs(head, mode)
-			os.mkdir(path)
-			os.chmod(path, mode)
-			print("set permission to {}".format(mode))
-			res += [path]
-			return res
-
-		if not os.path.exists(basepath):		
-			if platform == "linux" or platform == "linux2":
-				supermakedirs(basepath, 0o755)
-			else:
-				os.makedirs(basepath)
-
-		with open(fullpath,mode='w+') as rawScores:
-			for Score in Scores:
-				tmp = str(Score[0]) + ',' + strftime("%X %x",Score[1]) + ',' + Score[2] + '\n'
-				rawScores.write(tmp)
+from div import writeHighscore
+from LED import LED, Fill, Flush
 
 
-	basepath= os.path.join(os.path.dirname(__file__), 'saves')
-	fullpath = os.path.join(basepath, "snake.txt")
-	
-	Scores=readHighscores(fullpath)
-	newScore=[score, localtime(), name]
+class Snake:
 
-	for index, Score in enumerate(Scores):
-		if newScore[0] > Score[0]:
-			Scores.insert(index,newScore)
-			rank = index + 1
-			Scores=Scores[:100]
-			writetofile(fullpath, Scores)
-			return rank
+    def __init__(self):
+        self.cols = self.rows = 16
+        self.foodxy = (randint(0, 15), randint(0, 15))
+        self.x = self.y = 0
+        self.matrix = [[0 for x in range(self.cols)] for x in range(self.rows)]
+        self.matrix = Fill(self.matrix, 0, 0, 0)
+        self.snakexy = deque()
+        self.snakexy.append((0, 8))
+        self.direction = 'r'
+        self.lastdir = 'r'
+        self.snakelength = 3
 
-	Scores.append(newScore)
-	rank = len(Scores) + 1
-	writetofile(fullpath, Scores)
-	return rank
-	
-if(__name__=="__main__"):
-		writeHighscore(4,"test")
+    def reset(self):
+        self.foodxy = (randint(0, 15), randint(0, 15))
+        self.x = self.y = 0
+        self.matrix = [[0 for x in range(self.cols)] for x in range(self.rows)]
+        self.matrix = Fill(self.matrix, 0, 0, 0)
+        self.snakexy = deque()
+        self.snakexy.append((0, 8))
+        self.direction = 'r'
+        self.lastdir = 'r'
+        self.snakelength = 3
+
+    def setDir(self, tbdir):
+        if tbdir == "r" and self.lastdir == "l":
+            return
+        if tbdir == "l" and self.lastdir == "r":
+            return
+        if tbdir == "u" and self.lastdir == "d":
+            return
+        if tbdir == "d" and self.lastdir == "u":
+            return
+        self.direction = tbdir
+
+    def getDir(self):
+        if self.direction == 'l':
+            self.x -= 1
+        if self.direction == 'r':
+            self.x += 1
+        if self.direction == 'u':
+            self.y -= 1
+        if self.direction == 'd':
+            self.y += 1
+
+    def Gameover(self):
+        if self.snakelength > 3:
+            rank = writeHighscore(self.snakelength, "max")
+            print("Rank {} with a score of {} points.".format(rank, self.snakelength))
+        for i in range(2):
+            self.matrix = Fill(self.matrix, 0, 0, 0)
+            Flush(self.matrix)
+            sleep(0.5)
+            for i in range(len(self.snakexy)):
+                x, y = self.snakexy[i]
+                self.matrix[x][y] = LED(0+75*(sin(i)+1), 255, 0)
+            Flush(self.matrix)
+            sleep(0.5)
+
+    def update(self):
+        self.x, self.y = self.snakexy[-1]
+        self.getDir()
+
+        #Collision detection
+        if self.x < 0 or self.x >= self.rows or self.y < 0 or self.y >= self.cols or (self.x, self.y) in self.snakexy:
+            self.Gameover()
+            self.reset()
+            return
+
+        if (self.x, self.y) == self.foodxy:
+            self.snakelength += 1
+            self.foodxy = (randint(0, 15), randint(0, 15))
+            while self.foodxy in self.snakexy:
+                self.foodxy = (randint(0, 15), randint(0, 15))
+        elif len(self.snakexy) >= self.snakelength:
+            self.snakexy.popleft()
+
+        self.lastdir = self.direction
+        self.snakexy.append((self.x, self.y))							
+        self.matrix = Fill(self.matrix, 0, 0, 0)
+        x, y = self.foodxy
+        self.matrix[x][y]=LED(100, 255, 100)
+        for i in range(len(self.snakexy)):
+            x, y = self.snakexy[i]
+            self.matrix[x][y] = LED(0+75*(sin(i)+1), 255, 0)
+        Flush(self.matrix)
