@@ -99,8 +99,8 @@ send3.onclick = function() {
 send4.onclick = function() {
 	ws.send("mediaflappe");
 }
-GoL.onclick = function(){
-	ws.send("gameGoL");
+count.onclick = function(){
+	ws.send("etcbincounter");
 }
 function newMessage(form) {
     var message = form.formToDict();

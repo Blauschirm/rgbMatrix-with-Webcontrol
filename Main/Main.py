@@ -19,7 +19,7 @@ from PIL import Image
 
 from LED import *  # findmode, setMotiv, single
 from Snake import Snake
-
+from BinCounter import BinCounter
 #from GameofLife import GameofLife
 
 
@@ -37,7 +37,7 @@ start = 0
 mode = 1
 S = None
 direction = None
-
+BC = None
 
 
 settings = {
@@ -112,6 +112,15 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 #CurrentDisplay.stop()
                 #CurrentDisplay = tornado.ioloop.PeriodicCallback(GoL.update, delay)
                 #CurrentDisplay.start()
+        elif message[:3] == "etc":
+            if message[3:] == "bincounter":
+                print("Starting binary counter")
+                global BC
+                if not BC:
+                    BC = BinCounter()
+                CurrentDisplay.stop()
+                CurrentDisplay = tornado.ioloop.PeriodicCallback(BC.update, 1000)
+                CurrentDisplay.start()
             
     def on_close(self):
         print('connection closed')
