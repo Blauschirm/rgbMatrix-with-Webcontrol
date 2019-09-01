@@ -119,7 +119,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 if not BC:
                     BC = BinCounter()
                 CurrentDisplay.stop()
-                CurrentDisplay = tornado.ioloop.PeriodicCallback(BC.update, 1000)
+                CurrentDisplay = tornado.ioloop.PeriodicCallback(BC.update, 100)
                 CurrentDisplay.start()
             
     def on_close(self):

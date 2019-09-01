@@ -1,5 +1,6 @@
 from LED import Flush, LED
-import time
+import time 
+from datetime import datetime
 
 class BinCounter():
 
@@ -8,12 +9,12 @@ class BinCounter():
         self.Matrix = [[0 for x in range(16)] for x in range(16)]
         self.OnColor = 255, 120, 0
         self.OffColor = 0, 0, 0
-        self.BDay = time.mktime(time.strptime("20 26 Nov 1993", "%H %d %b %Y"))
-        print("init")
+        self.BDay = int(datetime.strptime("20 26 Nov 1993", "%H %d %b %Y").timestamp() * 1000)
+        print(self.BDay)
 
     def update(self):
         #count = self.count
-        count = int(time.mktime(time.localtime()) - self.BDay)
+        count = int(round(time.mktime(time.localtime()) * 1000)) + datetime.now().microsecond//1000 - self.BDay
         print(count)
         #print(count)
         for j in range(16):
@@ -34,4 +35,4 @@ if __name__ == "__main__":
     BC = BinCounter()
     while 1:
         BC.update()
-        sleep(1)
+        sleep(0.1)
