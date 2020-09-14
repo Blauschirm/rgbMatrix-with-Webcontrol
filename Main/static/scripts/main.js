@@ -75,7 +75,7 @@ function newWS() {
 		ws.onmessage = function (evt) { 
 			var received_msg = evt.data;
 			if(evt.data instanceof ArrayBuffer){
-				var frame = new Uint8Array(event.data);
+				var frame = new Uint8Array(evt.data);
 				refreshCanvas(frame);
 			}
 		};
