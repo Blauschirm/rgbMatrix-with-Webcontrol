@@ -184,6 +184,6 @@ def setPeriodicCallback(Media, mode, requested_fps = 24):
 
 if __name__ == "__main__":
     print("Starting")
-    CurrentDisplay = setPeriodicCallback("mario", 1, 1)
+    CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 500)
     CurrentDisplay.start()       
     StartWebsocket(port)
