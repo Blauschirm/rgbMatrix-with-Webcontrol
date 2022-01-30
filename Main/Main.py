@@ -20,6 +20,8 @@ from PIL import Image
 from LED import *  # findmode, setMotiv, single
 from Snake import Snake
 from BinCounter import BinCounter
+from Clock import Clock
+
 #from GameofLife import GameofLife
 
 
@@ -38,6 +40,7 @@ mode = 1
 S = None
 direction = None
 BC = None
+clock = None
 
 
 settings = {
@@ -120,6 +123,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     BC = BinCounter()
                 CurrentDisplay.stop()
                 CurrentDisplay = tornado.ioloop.PeriodicCallback(BC.update, 100)
+                CurrentDisplay.start()
+            if message[3:] == "clock":
+                print("Starting Clock")
+                clock = Clock()
+                CurrentDisplay.stop()
+                CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 1000)
                 CurrentDisplay.start()
             
     def on_close(self):

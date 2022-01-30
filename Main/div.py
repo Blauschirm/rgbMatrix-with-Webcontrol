@@ -1,6 +1,35 @@
 import os
+import sys
 from platform import platform
-from time import strftime, localtime, strptime
+from time import localtime, strftime, strptime
+
+import numpy as np
+from PIL import Image, ImageOps
+
+def get_char_bitmap(character = ''):
+    font_map_path = os.path.dirname(os.path.abspath(sys.argv[0])) + "/static/Images/font_map.bmp"
+    grid_width = 6
+    grid_height = 6
+    padding_x = 1
+    padding_y = 1
+
+    map = [
+            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'],
+            ['N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+            ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ']
+    ]
+
+    def findItem(theList, item):
+        return [(ind, theList[ind].index(item)) for ind in range(len(theList)) if item in theList[ind]][0]
+
+    with Image.open(font_map_path) as im:
+        (n, m) = findItem(map, character)
+        im_inverted = ImageOps.invert(im)
+        im_bw = im_inverted.convert('1')
+        crop_region = (m * grid_width + padding_x, n * grid_height + padding_y, (m + 1) * grid_width, (n + 1) * grid_height)
+        char_bitmap = im_bw.crop(crop_region)
+         
+    return(np.array(char_bitmap))
 
 def readHighscores(path):
     Scores=[]

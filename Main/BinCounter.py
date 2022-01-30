@@ -35,4 +35,4 @@ if __name__ == "__main__":
     BC = BinCounter()
     while 1:
         BC.update()
-        sleep(0.1)
+        time.sleep(0.1)

@@ -102,6 +102,10 @@ send4.onclick = function() {
 count.onclick = function(){
 	ws.send("etcbincounter");
 }
+clock.onclick = function(){
+	ws.send("etcclock");
+}
+
 function newMessage(form) {
     var message = form.formToDict();
     ws.send(JSON.stringify(message));
