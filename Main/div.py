@@ -31,6 +31,25 @@ def get_char_bitmap(character = ''):
          
     return(np.array(char_bitmap))
 
+def make_folder(basepath):
+
+    def supermakedirs(path, mode):
+        if not path or os.path.exists(path):
+            return []
+        (head, tail) = os.path.split(path)
+        res = supermakedirs(head, mode)
+        os.mkdir(path)
+        os.chmod(path, mode)
+        print("set permission to {}".format(mode))
+        res += [path]
+        return res
+
+    if not os.path.exists(basepath):		
+        if platform == "linux" or platform == "linux2":
+            supermakedirs(basepath, 0o755)
+        else:
+            os.makedirs(basepath)
+
 def readHighscores(path):
     Scores=[]
     if os.path.exists(path):
@@ -46,24 +65,9 @@ def readHighscores(path):
 def writeHighscore(score, name):
     rank=0
 
-    def writetofile(path, Scores):
+    def writetofile(Scores):
 
-        def supermakedirs(path, mode):
-            if not path or os.path.exists(path):
-                return []
-            (head, tail) = os.path.split(path)
-            res = supermakedirs(head, mode)
-            os.mkdir(path)
-            os.chmod(path, mode)
-            print("set permission to {}".format(mode))
-            res += [path]
-            return res
-
-        if not os.path.exists(basepath):		
-            if platform == "linux" or platform == "linux2":
-                supermakedirs(basepath, 0o755)
-            else:
-                os.makedirs(basepath)
+        make_folder(basepath)
 
         with open(fullpath,mode='w+') as rawScores:
             for Score in Scores:
@@ -87,5 +91,5 @@ def writeHighscore(score, name):
 
     Scores.append(newScore)
     rank = len(Scores) + 1
-    writetofile(fullpath, Scores)
+    writetofile(Scores)
     return rank

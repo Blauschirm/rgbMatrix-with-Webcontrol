@@ -6,13 +6,13 @@ import numpy as np
 
 class Clock():
 
-    def __init__(self, color_palette):
-        self.color_palette = color_palette
+    def __init__(self, config):
+        self.config = config
         self.OffColor = 0, 0, 0
  
 
     def update(self):
-        self.OnColor = self.color_palette.highlight
+        self.OnColor = self.config.colors["highlight"]
         self.Matrix = [[0 for x in range(16)] for x in range(16)]
         self.hours =  datetime.strftime(datetime.now(), "%H")
         self.minutes =  datetime.strftime(datetime.now(), "%M")

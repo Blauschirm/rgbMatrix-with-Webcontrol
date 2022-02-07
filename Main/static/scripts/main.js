@@ -45,7 +45,6 @@ function initCanvas() {
 			ctx.fillRect((j*(rectsize))+1,(i*(rectsize))+1,rectsize-1,rectsize-1);
 		}
 	}
-	
 }
 
 function refreshCanvas(frame) {
@@ -65,6 +64,13 @@ function refreshCanvas(frame) {
 	}
 }
 
+function update_config(config_string) {
+	Metro.getPlugin("@color-selector").colorselector.options.returnValueType = "rgb";
+	rgb_list =  JSON.parse(config_string)["highlight_color"]
+	rgb_str = `rgb(${rgb_list[0]}, ${rgb_list[1]}, ${rgb_list[2]})`
+	Metro.getPlugin("@color-selector").colorselector.val(rgb_str)
+}
+
 function newWS() {
 	if ("WebSocket" in window) {
 		var url = "ws://" + location.host + "/ws";
@@ -73,12 +79,17 @@ function newWS() {
 		ws.onopen = function() {
 			//alert("Connection is open...");
 			initCanvas();
+			ws.send("ready_for_config")
 		};
 		ws.onmessage = function (evt) { 
 			var received_msg = evt.data;
 			if(evt.data instanceof ArrayBuffer){
 				var frame = new Uint8Array(evt.data);
 				refreshCanvas(frame);
+			}
+			else {
+				console.log(evt.data)
+				update_config(evt.data)
 			}
 		};
 		ws.onclose = function() { 
@@ -113,17 +124,13 @@ function newMessage(form) {
     ws.send(JSON.stringify(message));
 }
 
-color_selector = Metro.getPlugin('@color-selector');
 
 function on_color_picked() {
 	color = color_selector.colorselector.rgb;
-	r_str = color.r.toString().padStart(3, "0");
-	g_str = color.g.toString().padStart(3, "0");
-	b_str = color.b.toString().padStart(3, "0");
-	console.log(`highlight_color: ${r_str}, ${g_str}, ${b_str}`);
-	ws.send(`highlight_color: ${r_str}, ${g_str}, ${b_str}`);
+	ws.send(`highlight_color: ${color.r},${color.g},${color.b}`);
 }
 
 window.onload = function () {
+	color_selector = Metro.getPlugin('@color-selector');
 	Metro.getPlugin("@color-selector").colorselector.options.onSelectColor = on_color_picked
 }

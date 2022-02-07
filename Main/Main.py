@@ -4,6 +4,8 @@
 import os
 import os.path
 import socket
+import pickle
+import json
 from math import *
 from os import urandom
 from random import randint
@@ -34,21 +36,29 @@ rows = 16
 hue = 1
 framerate = 24
 port = 8888
+ 
 
 
-class Colors:
+
+class Config:
     def __init__(self):
-        self.highlight = (255, 120, 0)
+        self.colors = {"highlight": (255, 120, 0)}
 
-color_palette = Colors()
-color_palette.highlight = (255, 120, 0)
+config_path = os.path.join(os.path.dirname(__file__), 'saves', 'config.pickle')
+
+if os.path.exists(config_path):
+    with open(config_path, mode="rb") as config_file:
+        config = pickle.load(config_file)
+else:
+    config = Config()  
+    config.colors["highlight"] = (255, 120, 0)
 
 start = 0
 mode = 1
 S = None
 direction = None
 
-clock = Clock(color_palette)
+clock = Clock(config)
 binary_counter = BinCounter()
 
 settings = {
@@ -86,17 +96,19 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.set_nodelay(True)
 
     def on_message(self, message):
-        global CurrentDisplay
+        global CurrentDisplay, config
         #print('message received:  %s' % message)
         if message == "lolz":
             CurrentDisplay.stop()
             print("stopped")
-        
+        elif message == "ready_for_config":
+            print("sending config to client")
+            self.write_message(json.dumps({"highlight_color": config.colors["highlight"]}))
         elif message[:15] == "highlight_color":
-            global highlight_color, color_palette
-            highlight_color_str = message[17:].split(", ")
+            global highlight_color
+            highlight_color_str = message[17:].split(",")
             highlight_color = tuple(int(v) for v in highlight_color_str)
-            color_palette.highlight = highlight_color
+            config.colors["highlight"] = highlight_color
         elif message[:3] == "dir": 
             global direction, S
             #print("dir detected")
@@ -141,6 +153,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 CurrentDisplay.stop()
                 CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 1000)
                 CurrentDisplay.start()
+        
+        # Save config to file
+        with open(config_path, mode="wb") as config_file:
+            pickle.dump(config, config_file)
             
     def on_close(self):
         print('connection closed')
@@ -196,5 +212,6 @@ def setPeriodicCallback(Media, mode, requested_fps = 24):
 if __name__ == "__main__":
     print("Starting")
     CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 500)
-    CurrentDisplay.start()       
-    StartWebsocket(port)
+    CurrentDisplay.start()   
+    
+    StartWebsocket(port)   
