@@ -33,7 +33,7 @@ cols = 16
 rows = 16
 hue = 1
 framerate = 24
-port = 80
+port = 8888
 
 
 class Colors:
@@ -195,7 +195,6 @@ def setPeriodicCallback(Media, mode, requested_fps = 24):
 
 if __name__ == "__main__":
     print("Starting")
-    clock = Clock()
     CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 500)
     CurrentDisplay.start()       
     StartWebsocket(port)
