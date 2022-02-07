@@ -33,15 +33,23 @@ cols = 16
 rows = 16
 hue = 1
 framerate = 24
-port = 8888
+port = 80
+
+
+class Colors:
+    def __init__(self):
+        self.highlight = (255, 120, 0)
+
+color_palette = Colors()
+color_palette.highlight = (255, 120, 0)
 
 start = 0
 mode = 1
 S = None
 direction = None
-BC = None
-clock = None
 
+clock = Clock(color_palette)
+binary_counter = BinCounter()
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"), 
@@ -83,7 +91,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if message == "lolz":
             CurrentDisplay.stop()
             print("stopped")
-
+        
+        elif message[:15] == "highlight_color":
+            global highlight_color, color_palette
+            highlight_color_str = message[17:].split(", ")
+            highlight_color = tuple(int(v) for v in highlight_color_str)
+            color_palette.highlight = highlight_color
         elif message[:3] == "dir": 
             global direction, S
             #print("dir detected")
@@ -118,15 +131,13 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         elif message[:3] == "etc":
             if message[3:] == "bincounter":
                 print("Starting binary counter")
-                global BC
-                if not BC:
-                    BC = BinCounter()
+                global binary_counter
                 CurrentDisplay.stop()
-                CurrentDisplay = tornado.ioloop.PeriodicCallback(BC.update, 100)
+                CurrentDisplay = tornado.ioloop.PeriodicCallback(binary_counter.update, 100)
                 CurrentDisplay.start()
             if message[3:] == "clock":
                 print("Starting Clock")
-                clock = Clock()
+                global clock
                 CurrentDisplay.stop()
                 CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 1000)
                 CurrentDisplay.start()

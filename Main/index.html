@@ -1,25 +1,69 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>My test page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pixel Box</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <!--<link href="styles/style.css" rel="stylesheet" type="text/css">-->
-	<link rel="stylesheet" href="{{ static_url('style.css') }}">
+  <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+  <link rel="stylesheet" href="static/style_V2.css">
    
   </head>
   <body>
-	  <h2>MeineMatrix</h2>
 
-    <canvas id="myCanvas" width="513" height="513"></canvas>
 
-    <button id="send1">Start Snake</button>
-    <button id="send2">NyanCat</button>
-    <button id="send3">Tetris</button>
-    <button id="send4">Flappy Bird</button>
-    <button id="count">BinCount</button>
-    <button id="clock">Clock</button>
-    <script src="{{ static_url('scripts/main.js') }}"></script>
+    <div class="main_wrapper">    
+
+      <div class="canvas_wrapper">
+        <img src="static/Images/canvas.png" class="canvas_placeholder">
+        <canvas id="myCanvas" width="513" height="513"></canvas>
+      </div>
+
+      <div class="control_wrapper">
+
+        <div data-role="accordion" data-one-frame="true" data-show-active="true">
+            <div class="frame colorpicker">
+                <div class="heading">Colours and Brightness</div>
+                <div class="content">
+                  <div id="color-selector" onColor="on_color_picked()" data-controller="#color-controller" data-role="color-selector" data-show-values="" data-show-alpha-channel="false">
+                  </div> 
+                  <div class="button_wrapper">
+                    <button class="w-306 button success rounded" onclick="on_color_picked()">Set Color</button>
+                  </div>
+                </div>
+            </div>
+            <div class="frame">
+                <div class="heading">Clocks</div>
+                <div class="content">
+                  <button id="count">BinCount</button>
+                  <button id="clock">Clock</button>
+                </div>
+            </div>
+            <div class="frame">
+                <div class="heading">Animations</div>
+                <div class="content">
+                  <button id="send2">NyanCat</button>
+                  <button id="send4">Flappy Bird</button>
+                </div>
+            </div>
+            <div class="frame">
+                <div class="heading">Games</div>
+                <div class="content">
+                  <button id="send1">Start Snake</button>
+                  <button id="send3">Tetris</button>
+                </div>
+            </div>
+        </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+    <script src="static/scripts/main.js"></script>
+
 	</body>
 </html>
