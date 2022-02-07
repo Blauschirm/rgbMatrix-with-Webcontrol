@@ -13,7 +13,12 @@
   </head>
   <body>
 
-
+    <div class="header">
+      <div class="logo">
+        <img src="static/Images/canvas.png" width=40 height=40>
+        <span> LED Box</span>
+      </div>
+    </div>
     <div class="main_wrapper">    
 
       <div class="canvas_wrapper">
@@ -27,7 +32,7 @@
             <div class="frame colorpicker">
                 <div class="heading">Colours and Brightness</div>
                 <div class="content">
-                  <div id="color-selector" onColor="on_color_picked()" data-controller="#color-controller" data-role="color-selector" data-show-values="" data-show-alpha-channel="false">
+                  <div id="color-selector" onColor="on_color_picked()" data-role="color-selector" data-show-values="" data-show-alpha-channel="false">
                   </div> 
                   <div class="button_wrapper">
                     <button class="w-306 button success rounded" onclick="on_color_picked()">Set Color</button>

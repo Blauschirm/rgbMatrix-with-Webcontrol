@@ -30,8 +30,6 @@ $(document).ready(function() {
 		}
 		e.preventDefault(); // prevent the default action (scroll / move caret)
 	});
-
-	color_selector.onColor = on_color_picked
 });
 
 function initCanvas() {
@@ -115,13 +113,17 @@ function newMessage(form) {
     ws.send(JSON.stringify(message));
 }
 
-color_selector = Metro.getPlugin('@color-selector')
+color_selector = Metro.getPlugin('@color-selector');
 
 function on_color_picked() {
 	color = color_selector.colorselector.rgb;
 	r_str = color.r.toString().padStart(3, "0");
 	g_str = color.g.toString().padStart(3, "0");
 	b_str = color.b.toString().padStart(3, "0");
-	console.log(`highlight_color: ${r_str}, ${g_str}, ${b_str}`)
-	ws.send(`highlight_color: ${r_str}, ${g_str}, ${b_str}`)
+	console.log(`highlight_color: ${r_str}, ${g_str}, ${b_str}`);
+	ws.send(`highlight_color: ${r_str}, ${g_str}, ${b_str}`);
+}
+
+window.onload = function () {
+	Metro.getPlugin("@color-selector").colorselector.options.onSelectColor = on_color_picked
 }
