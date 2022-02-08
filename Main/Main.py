@@ -119,7 +119,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             Media = message[5:]
             print(Media)
             if isinFiles(Media):
-                mode = findmode(Media)
                 fps = findfps(Media)
                 CurrentDisplay.stop()
                 CurrentDisplay = setPeriodicCallback(Media, findmode(Media), fps)
@@ -192,16 +191,16 @@ def setPeriodicCallback(Media, mode, requested_fps = 24):
         setMotiv(Media, mode)
         fps = findfps(Media)
     delay = int(1000/fps)
-    if mode == 1:
+    if mode == 's':
         CurrentDisplay = tornado.ioloop.PeriodicCallback(single, delay)
         return CurrentDisplay
-    elif mode == 2: 
+    elif mode == 'v': 
         CurrentDisplay = tornado.ioloop.PeriodicCallback(vertical, delay)
         return CurrentDisplay
-    elif mode == 4:
+    elif mode == 'm':
         CurrentDisplay = tornado.ioloop.PeriodicCallback(multiple, delay)
         return CurrentDisplay
-    elif mode == 3:
+    elif mode == 'h':
         CurrentDisplay = tornado.ioloop.PeriodicCallback(horizontal, delay)
         return CurrentDisplay
     elif mode == 5:
