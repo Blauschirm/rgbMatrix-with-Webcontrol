@@ -110,7 +110,7 @@ send3.onclick = function() {
 	ws.send("mediatetris");
 }
 send4.onclick = function() {
-	ws.send("mediaflappe");
+	ws.send("mediaflappy");
 }
 count.onclick = function(){
 	ws.send("etcbincounter");

@@ -4,13 +4,7 @@ import numpy as np
 
 from time import sleep
 
-
 from LED import numpy_flush
-
-
-
-picture_root_folder = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "static/Images/Pixels")
-
 
 class MediaPlayer():
     def __init__(self, picture_root_folder):
@@ -19,8 +13,9 @@ class MediaPlayer():
         self.media_path = "flappy"
         self.media_mode = "auto"
         self.media_fps  = 5
+        self.frametime_ms = 200
         self.current_image = None
-        self.numpy_image = np.zeros((16, 16, 3), np.uint8)
+        self.numpy_image = np.zeros((16, 16, 3), np.ubyte)
         self.media_frames = 0
         self.current_index = 0
 
@@ -28,17 +23,18 @@ class MediaPlayer():
 
     def set_media(self, name, info):
         # "flappy", {"path": "/flappy", "mode": "auto", "fps" : 5}
+        self.current_index = 0
         self.media_name = name
         self.media_path = os.path.join(self.picture_root_folder, info["path"])
-        print("self.media_path = " + self.media_path)
         self.media_mode = info["mode"]
         self.media_fps  = info["fps"]
+        self.media_frametime_ms = 1000//self.media_fps
 
         if self.media_mode not in ('v', 'h', 's', 'm'):
             self.media_mode = self.findmode()
         self.update_handler = self.update_handlers[self.media_mode]
-
-        self.numpy_image = np.array(Image.open(self.media_path))
+        if self.media_path[-4:] == ".bmp":
+            self.numpy_image = np.array(Image.open(self.media_path), np.ubyte)
 
     def set_media_by_name(self, name):
         self.media_name = name
@@ -90,7 +86,6 @@ class MediaPlayer():
     def vertical(self):
         matrix = self.numpy_image[16*self.current_index:16*(self.current_index+1), 0:16, :]
         numpy_flush(matrix)
-
         self.current_index += 1
         if(self.current_index >= self.media_frames):
             self.current_index = 0
@@ -107,7 +102,6 @@ class MediaPlayer():
 
         picname = str(self.current_index) + ".bmp"
         complete_filepath = os.path.join(self.media_path, picname)
-        print(complete_filepath)
 
         picture = Image.open(complete_filepath)
         matrix = np.array(picture)
@@ -118,18 +112,10 @@ class MediaPlayer():
         if not os.path.exists(complete_filepath):
             self.current_index = 0
 
-
-
-class Media:
-    def __init__(self, path, mode, requestedfps):
-        self.path = path
-        self.mode = mode
-        self.fps = requestedfps
-
-
 if __name__ == "__main__":
+    picture_root_folder = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "static/Images/Pixels")
     mediaplayer = MediaPlayer(picture_root_folder = picture_root_folder)
     mediaplayer.set_media_by_name("nyancat")
-    for i in range(20):
+    for i in range(30):
         mediaplayer.update()
         sleep(1/mediaplayer.media_fps)

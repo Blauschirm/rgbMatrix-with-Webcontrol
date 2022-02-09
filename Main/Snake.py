@@ -1,4 +1,5 @@
 """ Simple Snake Game """
+import numpy as np
 
 from collections import deque
 from math import sin
@@ -6,17 +7,17 @@ from random import randint
 from time import sleep
 
 from div import writeHighscore
-from LED import LED, Fill, Flush
+from LED import numpy_flush
 
 
 class Snake:
 
     def __init__(self):
-        self.cols = self.rows = 16
-        self.foodxy = (randint(0, 15), randint(0, 15))
+        self.shape = (16, 16, 3)
+        self.foodxy = (
+            randint(0, self.shape[0]-1), randint(0, self.shape[1]-1))
         self.x = self.y = 0
-        self.matrix = [[0 for x in range(self.cols)] for x in range(self.rows)]
-        self.matrix = Fill(self.matrix, 0, 0, 0)
+        self.matrix = np.zeros(self.shape, np.ubyte)
         self.snakexy = deque()
         self.snakexy.append((0, 8))
         self.direction = 'r'
@@ -24,10 +25,10 @@ class Snake:
         self.snakelength = 3
 
     def reset(self):
-        self.foodxy = (randint(0, 15), randint(0, 15))
+        self.foodxy = (
+            randint(0, self.shape[0]-1), randint(0, self.shape[1]-1))
         self.x = self.y = 0
-        self.matrix = [[0 for x in range(self.cols)] for x in range(self.rows)]
-        self.matrix = Fill(self.matrix, 0, 0, 0)
+        self.matrix = np.zeros(self.shape, np.ubyte)
         self.snakexy = deque()
         self.snakexy.append((0, 8))
         self.direction = 'r'
@@ -58,41 +59,44 @@ class Snake:
     def Gameover(self):
         if self.snakelength > 3:
             rank = writeHighscore(self.snakelength, "max")
-            print("Rank {} with a score of {} points.".format(rank, self.snakelength))
+            print("Rank {} with a score of {} points.".format(
+                rank, self.snakelength))
         for i in range(2):
-            self.matrix = Fill(self.matrix, 0, 0, 0)
-            Flush(self.matrix)
+            self.matrix = np.zeros(self.shape, np.ubyte)
+            numpy_flush(self.matrix)
             sleep(0.5)
             for i in range(len(self.snakexy)):
                 x, y = self.snakexy[i]
-                self.matrix[x][y] = LED(0+75*(sin(i)+1), 255, 0)
-            Flush(self.matrix)
+                self.matrix[y, x] = (75*(sin(i)+1), 255, 0)
+            numpy_flush(self.matrix)
             sleep(0.5)
 
     def update(self):
         self.x, self.y = self.snakexy[-1]
         self.getDir()
 
-        #Collision detection
-        if self.x < 0 or self.x >= self.rows or self.y < 0 or self.y >= self.cols or (self.x, self.y) in self.snakexy:
+        # Collision detection
+        if self.x < 0 or self.x >= self.shape[0] or self.y < 0 or self.y >= self.shape[1] or (self.x, self.y) in self.snakexy:
             self.Gameover()
             self.reset()
             return
 
         if (self.x, self.y) == self.foodxy:
             self.snakelength += 1
-            self.foodxy = (randint(0, 15), randint(0, 15))
+            self.foodxy = (
+                randint(0, self.shape[0]-1), randint(0, self.shape[1]-1))
             while self.foodxy in self.snakexy:
-                self.foodxy = (randint(0, 15), randint(0, 15))
+                self.foodxy = (
+                    randint(0, self.shape[0]-1), randint(0, self.shape[1]-1))
         elif len(self.snakexy) >= self.snakelength:
             self.snakexy.popleft()
 
         self.lastdir = self.direction
-        self.snakexy.append((self.x, self.y))							
-        self.matrix = Fill(self.matrix, 0, 0, 0)
+        self.snakexy.append((self.x, self.y))
+        self.matrix = np.zeros(self.shape, np.ubyte)
         x, y = self.foodxy
-        self.matrix[x][y]=LED(100, 255, 100)
+        self.matrix[y, x] = (100, 255, 100)
         for i in range(len(self.snakexy)):
-            x, y = self.snakexy[i]
-            self.matrix[x][y] = LED(0+75*(sin(i)+1), 255, 0)
-        Flush(self.matrix)
+            x, y=self.snakexy[i]
+            self.matrix[y, x]=(75*(sin(i)+1), 255, 0)
+        numpy_flush(self.matrix)

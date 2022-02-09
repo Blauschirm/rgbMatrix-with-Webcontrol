@@ -1,12 +1,14 @@
 from LED import Flush, LED
 from random import randint
-
+import numpy as np
 
 class Tile():
     def __init__(self):
         self.isAlive = False
         self.willLive = False
         self.neighbours = 0
+        self.shape = (16,16,3)
+
 
     def update(self):
         self.isAlive = self.willLive
@@ -14,9 +16,9 @@ class Tile():
 
     def getRGB(self):
         if self.isAlive: 
-            return LED(0,255,0)
+            return (0,255,0)
         else: 
-            return LED(0,0,0)
+            return (0,0,0)
 
     def check(self):
         if(self.isAlive):
@@ -45,7 +47,7 @@ class GameofLife:
             for j in range(16):
                 self.Board[i][j]=Tile()
         self.startpopulation = 100
-        self.Matrix=[[None]*16]*16
+        self.matrix=np.zeros(self.shape, np.ubyte)
 
     def reset(self):
         i = 0
@@ -73,9 +75,9 @@ class GameofLife:
 
         for i in range(16):
             for j in range(16):
-                self.Matrix[j][i] = self.Board[j][i].getRGB()
+                self.matrix[j, i] = self.Board[j][i].getRGB()
                 calcTile(i, j, self.Board)
                 self.Board[j][i].check()
                 self.Board[j][i].update()
 
-        Flush(self.Matrix)
+        Flush(self.matrix)

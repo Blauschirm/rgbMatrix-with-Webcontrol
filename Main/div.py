@@ -40,7 +40,6 @@ def make_folder(basepath):
         res = supermakedirs(head, mode)
         os.mkdir(path)
         os.chmod(path, mode)
-        print("set permission to {}".format(mode))
         res += [path]
         return res
 
@@ -86,7 +85,7 @@ def writeHighscore(score, name):
             Scores.insert(index,newScore)
             rank = index + 1
             Scores=Scores[:100]
-            writetofile(fullpath, Scores)
+            writetofile(Scores)
             return rank
 
     Scores.append(newScore)

@@ -1,6 +1,6 @@
 {
     "mario": {"path": "Mario", "mode": "single", "fps" : 1},
     "flappy": {"path": "flappy", "mode": "auto", "fps" : 5},
-    "nyancat": {"path": "NyanCat/0.bmp", "mode": null, "fps" : 4},
-    "tetris": {"path": "tetris", "mode": null, "fps" : 12}
+    "nyancat": {"path": "NyanCat/0.bmp", "mode": null, "fps" : 6},
+    "tetris": {"path": "tetris", "mode": null, "fps" : 20}
 }
