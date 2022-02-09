@@ -6,6 +6,8 @@ import os.path
 import socket
 import pickle
 import json
+import sys
+
 from math import *
 from os import urandom
 from random import randint
@@ -33,6 +35,7 @@ port = 8888
 class Config:
     def __init__(self):
         self.colors = {"highlight": (255, 120, 0)}
+        self.clock = {"offset": False, "seconds": False, "seconds_smooted": False}
 
 config_path = os.path.join(os.path.dirname(__file__), 'saves', 'config.pickle')
 picture_root_folder = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "static/Images/Pixels")
@@ -161,7 +164,7 @@ Application = tornado.web.Application([
 
 if __name__ == "__main__":
     print("Starting")
-    CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 500)
+    CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 15)
     CurrentDisplay.start()   
     
     StartWebsocket(port)   

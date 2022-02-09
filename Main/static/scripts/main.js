@@ -134,3 +134,12 @@ window.onload = function () {
 	color_selector = Metro.getPlugin('@color-selector');
 	Metro.getPlugin("@color-selector").colorselector.options.onSelectColor = on_color_picked
 }
+
+write_config = function () {
+	for (checkbox of $(".config_checkbox")) {
+		console.log(checkbox.children[0].id)
+		console.log(checkbox.children[0].checked)
+	}
+}
+
+$(".config_checkbox").change(write_config);
