@@ -35,9 +35,10 @@ port = 8888
 class Config:
     def __init__(self):
         self.colors = {"highlight": (255, 120, 0)}
-        self.clock = {"offset": False, "seconds": False, "seconds_smooted": False}
+        self.clock = {"offset": False, "seconds": False, "seconds_smoothed": False}
 
-config_path = os.path.join(os.path.dirname(__file__), 'saves', 'config.pickle')
+# config_path = os.path.join(os.path.dirname(__file__), 'saves', 'config.pickle')
+config_path = os.path.join(os.path.dirname(__file__), 'saves', 'config.json')
 picture_root_folder = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "static/Images/Pixels")
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"), 
@@ -45,11 +46,15 @@ settings = {
 
 
 if os.path.exists(config_path):
-    with open(config_path, mode="rb") as config_file:
-        config = pickle.load(config_file)
+    with open(config_path, mode="r") as config_file:
+        config = json.load(config_file)
 else:
-    config = Config()  
-    config.colors["highlight"] = (255, 120, 0)
+    config = {
+        "config_clock_offset": False,
+        "config_clock_seconds": False,
+        "config_clock_seconds_smoothed": False,
+        "config_colors_highlight": (255, 120, 0)
+    }
 
 direction = None
 
@@ -57,6 +62,8 @@ snake = Snake()
 clock = Clock(config)
 binary_counter = BinCounter()
 media_player = MediaPlayer(picture_root_folder)
+
+active_websockets = set()
 
 def getDirection():
     global direction
@@ -75,20 +82,29 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         global CurrentDisplay
         print('new connection')
-        setWSH(self)
         self.set_nodelay(True)
+        active_websockets.add(self)
+        setWSH(active_websockets)
 
     def on_message(self, message):
         global CurrentDisplay, config
         #print('message received:  %s' % message)
         if message == "ready_for_config":
             print("sending config to client")
-            self.write_message(json.dumps({"highlight_color": config.colors["highlight"]}))
+            # self.write_message(json.dumps({"highlight_color": config["config_colors_highlight"]}))
+            self.write_message(json.dumps(config))
+        elif message[:14] == "config_change:":
+            config_changes = json.loads(message[14:])
+            for key, value in config_changes.items():
+                config[key] = value
+            for active_ws in active_websockets:
+                active_ws.write_message(json.dumps(config_changes))
         elif message[:15] == "highlight_color":
             global highlight_color
             highlight_color_str = message[17:].split(",")
             highlight_color = tuple(int(v) for v in highlight_color_str)
-            config.colors["highlight"] = highlight_color
+            config["config_colors_highlight"] = highlight_color
+            print(config)
         elif message[:3] == "dir": 
             global direction, snake
             direction = message[3:]
@@ -127,16 +143,17 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 print("Starting Clock")
                 global clock
                 CurrentDisplay.stop()
-                CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 500)
+                CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 250)
                 CurrentDisplay.start()
         
         # Save config to file
-        with open(config_path, mode="wb") as config_file:
-            pickle.dump(config, config_file)
+        with open(config_path, mode="w") as config_file:
+            json.dump(config, config_file, indent=4)
             
     def on_close(self):
         print('connection closed')
-        setWSH(None)    
+        active_websockets.remove(self)
+        setWSH(active_websockets)
 
 class MainHandler(tornado.websocket.WebSocketHandler):
     def check_origin(self, origin):

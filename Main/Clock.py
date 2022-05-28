@@ -12,13 +12,13 @@ class Clock():
  
 
     def update(self):
-        on_color = self.config.colors["highlight"]
+        on_color = self.config["config_colors_highlight"]
         hours =  datetime.strftime(datetime.now(), "%H")
         minutes =  datetime.strftime(datetime.now(), "%M")
 
         frame = np.zeros((16,16))
 
-        if self.config.clock["offset"]:
+        if self.config["config_clock_offset"]:
             frame[1:6, 1:6] = get_char_bitmap(hours[0])
             frame[1:6, 7:12] = get_char_bitmap(hours[1])
             frame[10:15, 5:10] = get_char_bitmap(minutes[0])
@@ -31,7 +31,7 @@ class Clock():
 
         matrix = [[on_color if r == 1 else self.OffColor for r in c] for c in frame]
 
-        if self.config.clock["seconds"]:
+        if self.config["config_clock_seconds"]:
             
             seconds = datetime.now().second
             us_in_s = datetime.now().microsecond / 1000000
@@ -40,7 +40,7 @@ class Clock():
             sm = np.zeros((16,16))    
 
             sf[seconds] = 1
-            if self.config.clock["seconds_smoothed"]:
+            if self.config["config_clock_seconds_smoothed"]:
                 sf[( seconds - 1 )%60] = 1 - us_in_s
                 sf[( seconds + 1 )%60] = us_in_s
 
@@ -50,7 +50,7 @@ class Clock():
             sm[0:15, 0] = np.flip(sf[38:53])
             sm[0, 1:8] = sf[53:60]
 
-            frame_with_seconds_dot = np.full((16,16,3), on_color) * sm.reshape((16,16,1)).astype("ubyte")
+            frame_with_seconds_dot = np.full((16,16,3), on_color) * sm.reshape((16,16,1))
             matrix = matrix + frame_with_seconds_dot
         
         numpy_flush(matrix)
