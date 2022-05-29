@@ -74,7 +74,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         global CurrentDisplay
-        print('new connection')
+        print(f'new connection from {self.request.remote_ip} ({self.request.host_name})')
         self.set_nodelay(True)
         active_websockets.add(self)
         LED.setWSH(active_websockets)
@@ -84,7 +84,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         #print('message received:  %s' % message)
         if message == "ready_for_config":
             print("sending config to client")
-            # self.write_message(json.dumps({"highlight_color": config["config_colors_highlight"]}))
             self.write_message(json.dumps(config))
         elif message[:14] == "config_change:":
             config_changes = json.loads(message[14:])
@@ -92,12 +91,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 config[key] = value
             for active_ws in active_websockets:
                 active_ws.write_message(json.dumps(config_changes))
-        elif message[:15] == "highlight_color":
-            global highlight_color
-            highlight_color_str = message[17:].split(",")
-            highlight_color = tuple(int(v) for v in highlight_color_str)
-            config["config_colors_highlight"] = highlight_color
-            print(config)
         elif message[:3] == "dir": 
             global direction, snake
             direction = message[3:]

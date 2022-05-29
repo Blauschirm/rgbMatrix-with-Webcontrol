@@ -144,7 +144,6 @@ function newMessage(form) {
 
 function on_color_picked() {	
 	color = color_selector.colorselector.rgb;
-	// ws.send(`highlight_color: ${color.r},${color.g},${color.b}`);
 	if (!change_in_progress){
 		config["config_colors_highlight"] = [color.r,color.g,color.b]
 		write_config()
