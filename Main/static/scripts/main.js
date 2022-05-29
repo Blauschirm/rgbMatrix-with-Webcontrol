@@ -179,3 +179,94 @@ write_config = function () {
 }
 
 $(".config_checkbox").change(write_config);
+
+// NES Controler Layout and Design by Charlie Volpe: https://codepen.io/charlie-volpe/pen/bdYdBp 
+// Button Presses
+$("#A").mousedown(function(){
+	$("#A").css('background', '#b3070b');
+});
+
+$("#A").mouseup(function(){
+	$("#A").css('background', '#e4060b');
+	ButtonPress("A");
+});
+
+$("#B").mousedown(function(){
+	$("#B").css('background', '#b3070b');
+});
+
+$("#B").mouseup(function(){
+	$("#B").css('background', '#e4060b');
+	ButtonPress("B");
+});
+
+$("#Select").mousedown(function(){
+	$("#Select").css('background', '#101211');
+});
+
+$("#Select").mouseup(function(){
+	$("#Select").css('background', '#323735');
+	ButtonPress("Select");
+});
+
+$("#Start").mousedown(function(){
+	$("#Start").css('background', '#101211');
+});
+
+$("#Start").mouseup(function(){
+	$("#Start").css('background', '#323735');
+	ButtonPress("Start");
+});
+
+$("#Up").mousedown(function(){
+	$("#Up").css('background', '#323735');
+});
+
+$("#Up").mouseup(function(){
+	$("#Up").css('background', 'none');
+	ButtonPress("Up");
+	ws.send("diru");
+});
+
+$("#Down").mousedown(function(){
+	$("#Down").css('background', '#323735');
+});
+
+$("#Down").mouseup(function(){
+	$("#Down").css('background', 'none');
+	ButtonPress("Down");
+	ws.send("dird");
+});
+
+$("#Left").mousedown(function(){
+	$("#Left").css('background', '#323735');
+});
+
+$("#Left").mouseup(function(){
+	$("#Left").css('background', 'none');
+	ButtonPress("Left");
+	ws.send("dirl")
+});
+
+$("#Right").mousedown(function(){
+	$("#Right").css('background', '#323735');
+});
+
+$("#Right").mouseup(function(){
+	$("#Right").css('background', 'none');
+	ButtonPress("Right");
+	ws.send("dirr")
+});
+
+// Catch all mouseup
+$('html').mouseup(function(){
+	$("#Up,#Down,#Left,#Right").css('background', 'none');
+	$("#A,#B").css('background', '#e4060b');
+	$("#Select,#Start").css('background', '#323735');
+});
+
+// Button Handler
+function ButtonPress(button){
+	$('.controller_out').text(button);
+	console.log(button)
+}

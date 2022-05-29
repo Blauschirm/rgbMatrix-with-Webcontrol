@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Coda+Caption:800)
+
 body
     width: 100%
     height: 100vh
@@ -42,6 +44,219 @@ body
                 align-content: center
                 justify-content: center
                 margin: 8px 0
+
+        .games
+
+            .wrapper
+                // NES Controler Layout and Design by Charlie Volpe: https://codepen.io/charlie-volpe/pen/bdYdBp 
+                color:#d9403b
+                font-family: "Coda Caption", sans-serif
+                transition: all 150ms linear
+                -webkit-transition: all 150ms linear
+                font-size: 10px
+                user-select: none
+                box-sizing: border-box
+
+                a, a:hover, a:focus 
+                    color: #d9403b
+                
+
+                .controller 
+                    position: relative
+                    background: #d2d2d0
+                    margin: 1rem auto
+                    width: 30rem
+                    height: 14rem
+                    border-radius: .25rem
+                
+
+                .pad-area 
+                    position: absolute
+                    background: #2b3334
+                    left: 1rem
+                    bottom: 1rem
+                    width: 28rem
+                    height: 10rem
+                    border-radius: .25rem
+                
+
+                .dpad 
+                    position: absolute
+                    bottom: 1.5rem
+                    left: 1.5rem
+                    width: 6rem
+                    height: 6rem
+                
+
+                .cross 
+                    position: absolute
+                    background: #111113
+                    border-radius: .2rem
+                    z-index: 5
+                
+
+                .cross.vert 
+                    left: 2rem
+                    width: 2rem
+                    height: 6rem
+                
+
+                .cross.hor 
+                    top: 2rem
+                    width: 6rem
+                    height: 2rem
+                
+
+                .cross-border 
+                    position: absolute
+                    background: #d3d2ce
+                    border-radius: .2rem
+                    z-index: 5
+                
+
+                .cross-border.vert 
+                    top: -.25rem
+                    left: 1.75rem
+                    width: 2.5rem
+                    height: 6.5rem
+                
+
+                .cross-border.hor 
+                    top: 1.75rem
+                    left: -.25rem
+                    width: 6.5rem
+                    height: 2.5rem
+                
+
+                .direction 
+                    position: absolute
+                    background: none
+                    width: 2rem
+                    height: 2rem
+                    z-index: 10
+                
+
+                #Up 
+                    left: 2rem
+                
+
+                #Down 
+                    left: 2rem
+                    bottom: 0
+                
+
+                #Left 
+                    top: 2rem
+                
+
+                #Right 
+                    top: 2rem
+                    right: 0
+                
+
+                .center 
+                    width: 8rem
+                    height: 100%
+                    margin: 0 9rem
+                
+
+                .gray-bar 
+                    position: relative
+                    background: #9a9b96
+                    width: 100%
+                    height: 1.5rem
+                    border-radius: .25rem
+                    margin-bottom: .5rem
+                
+
+                .gray-bar.first 
+                    border-top-left-radius: 0
+                    border-top-right-radius: 0
+                
+
+                .gray-bar.big 
+                    background: #d3d2ce
+                    height: 2.55rem
+                
+
+                .gray-bar.last 
+                    height: .925rem
+                    border-bottom-left-radius: 0
+                    border-bottom-right-radius: 0
+                
+
+                .gray-bar span 
+                    margin-left: .65rem
+                    font-size: .75rem
+                
+
+                .skinny-button 
+                    position: absolute
+                    background: #323735
+                    top: .75rem
+                    width: 3rem
+                    height: 1rem
+                    border-radius: 2rem
+                
+
+                .skinny-button.select 
+                    left: .5rem
+                
+
+                .skinny-button.start 
+                    right: .5rem
+                
+
+                .nintendo 
+                    position: absolute
+                    right: 3.5rem
+                    top: 1.5rem
+                
+
+                .nintendo:after 
+                    content: "®"
+                    position: absolute
+                    font-size: .75rem
+                    top: -.25rem
+                    right: -.75rem
+                
+
+                .buttons 
+                    position: absolute
+                    right: 1.5rem
+                    bottom: 1rem
+                    width: 8rem
+                    height: 3rem
+                
+
+                .button-pad 
+                    position: relative
+                    float: right
+                    background: #d3d2ce
+                    margin-right: 1rem
+                    width: 3rem
+                    height: 3rem
+                    border-radius: .25rem
+                
+
+                .button 
+                    background: #e4060b
+                    display: block
+                    width: 2.5rem
+                    height: 2.5rem
+                    margin: .25rem auto
+                    border-radius: 50%
+                
+
+                .button-letter 
+                    position: absolute
+                    font-size: .75rem
+                    right: 0
+                
+
+                .controller_out     
+                    text-align: center
+                
 
 
 

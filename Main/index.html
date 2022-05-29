@@ -52,11 +52,64 @@
                   <button id="send4">Flappy Bird</button>
                 </div>
             </div>
-            <div class="frame">
+            <div class="frame games">
                 <div class="heading">Games</div>
                 <div class="content">
                   <button id="send1">Start Snake</button>
                   <button id="send3">Tetris</button>
+
+                  <div class="wrapper">
+                    {# NES Controler Layout and Design by Charlie Volpe: https://codepen.io/charlie-volpe/pen/bdYdBp #}
+                    <div class="controller">
+                      <div class="pad-area">
+                        <div class="dpad">
+                          <div class='cross-border vert'></div>
+                          <div class='cross-border hor'></div>
+                          
+                          <div class="cross vert"></div>
+                          <div class="cross hor"></div>
+                          
+                          <div id="Up" class="direction"></div>
+                          <div id="Down" class="direction"></div>
+                          <div id="Left" class="direction"></div>
+                          <div id="Right" class="direction"></div>
+                        </div>
+                        
+                        <div class="center">
+                          <div class="gray-bar first"></div>
+                          <div class="gray-bar"></div>
+                          <div class="gray-bar">
+                            <span>SELECT</span>
+                            <span>START</span>
+                          </div>
+                          <div class="gray-bar big">
+                            <div id="Select" class="skinny-button select"></div>
+                            <div id="Start" class="skinny-button start"></div>
+                          </div>
+                          <div class="gray-bar last"></div>
+                        </div>
+                        
+                        <div class="nintendo">
+                          Nintendo
+                        </div>
+                        
+                        <div class="buttons">
+                          <div class="button-pad">
+                            <div id="A" class="button"></div>
+                            <div class="button-letter">A</div>
+                          </div>
+                        
+                          <div class="button-pad">
+                            <div id="B" class="button"></div>
+                            <div class="button-letter">B</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="controller_out"></div>
+                  </div>
+
                 </div>
             </div>
         </div>
