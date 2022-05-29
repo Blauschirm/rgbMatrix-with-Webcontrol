@@ -19,7 +19,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 
-from LED import * 
+import LED 
 from Snake import Snake
 from BinCounter import BinCounter
 from Clock import Clock
@@ -31,13 +31,6 @@ debug = True
 
 port = 8888
  
-
-class Config:
-    def __init__(self):
-        self.colors = {"highlight": (255, 120, 0)}
-        self.clock = {"offset": False, "seconds": False, "seconds_smoothed": False}
-
-# config_path = os.path.join(os.path.dirname(__file__), 'saves', 'config.pickle')
 config_path = os.path.join(os.path.dirname(__file__), 'saves', 'config.json')
 picture_root_folder = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "static/Images/Pixels")
 settings = {
@@ -60,7 +53,7 @@ direction = None
 
 snake = Snake()
 clock = Clock(config)
-binary_counter = BinCounter()
+binary_counter = BinCounter(config)
 media_player = MediaPlayer(picture_root_folder)
 
 active_websockets = set()
@@ -84,7 +77,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print('new connection')
         self.set_nodelay(True)
         active_websockets.add(self)
-        setWSH(active_websockets)
+        LED.setWSH(active_websockets)
 
     def on_message(self, message):
         global CurrentDisplay, config
@@ -153,7 +146,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         print('connection closed')
         active_websockets.remove(self)
-        setWSH(active_websockets)
+        LED.setWSH(active_websockets)
 
 class MainHandler(tornado.websocket.WebSocketHandler):
     def check_origin(self, origin):

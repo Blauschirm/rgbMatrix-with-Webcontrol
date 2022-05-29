@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-from random import randint
 from sys import platform
 import numpy as np
 import serial
@@ -12,26 +11,7 @@ else:
     Serial = False
     print("Detected Windows, starting without serial output.")
 
-
-# mark1
-#path = "C:/Users/Max/Pictures/Pixels/365/bmp/8.bmp"
-#flappe = "C:/Users/Max/Pictures/Pixels/flappy"
-#tetris = "C:/Users/Max/Pictures/Pixels/tetris"
-#NyanCat = "C:/Users/Max/Pictures/Pixels/NyanCat/0.bmp"
-#Link_walk = "C:/Users/Max/Pictures/Pixels/link-walk"
-#LSD1 = "C:/Users/Max/Pictures/Pixels/LSD/rainbow-spiral/0.bmp"
-#Gameboy = "C:/Users/Max/Pictures/Pixels/Gameboy/0.bmp"
-#Lemmingsfall = "C:/Users/Max/Pictures/Pixels/Lemmings/Lemmingasfall"
-#white = "C:/Users/Max/Pictures/Pixels/white.bmp"
-#mushrooms = "C:/Users/Max/Pictures/Pixels/mushrooms"
-#outrun ="C:\\Users\\Max\\Pictures\\Pixels\\365\\365daypixelartchallenge\\0.bmp"
-
-cols = 16
-rows = 16
-hue = 1
-matrix = np.zeros((cols, rows, 3))
-correction_matrix = np.zeros((cols, rows, 3))
-
+brightness = 1
 
 if Serial:
     ser = serial.Serial('/dev/ttyAMA0', 1000000, timeout=0.1)
@@ -42,17 +22,14 @@ def setWSH(active_ws):
     global active_websockets
     active_websockets = active_ws
 
-
 def numpy_flush(matrix_rgb):
-    global ser
-    global WSH
 
     rgb_to_grb_conversion = np.array([1, 0, 2])
     white_balance_values = np.array([1, 0.96, 0.82])
 
     np_matrix_rgb = np.array(matrix_rgb, np.ubyte)
     # dim all values with hue and floor to unit8, or ubytes
-    np_matrix_dimmed = np.array(np_matrix_rgb * hue, np.ubyte)
+    np_matrix_dimmed = np.array(np_matrix_rgb * brightness, np.ubyte)
     # apply the white balance for the LEDs
     np_matrix_dimmed_wb = np.array(np_matrix_dimmed * white_balance_values, np.ubyte)
     # convert matrix to grb matrix for the WS2812b LEDs
