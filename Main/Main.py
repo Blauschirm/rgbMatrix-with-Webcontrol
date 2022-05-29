@@ -105,7 +105,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         elif message[:4] == "game":
             game = message[4:]
             if game == "snake":
-                delay = 1000/15
+                delay = 1000/5
                 snake = Snake()
                 snake.reset()
                 CurrentDisplay.stop()
@@ -129,7 +129,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 print("Starting Clock")
                 global clock
                 CurrentDisplay.stop()
-                CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 250)
+                CurrentDisplay = tornado.ioloop.PeriodicCallback(clock.update, 20)
                 CurrentDisplay.start()
         
         # Save config to file

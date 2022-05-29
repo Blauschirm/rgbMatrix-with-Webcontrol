@@ -220,42 +220,42 @@ $("#Start").mouseup(function(){
 
 $("#Up").mousedown(function(){
 	$("#Up").css('background', '#323735');
+	ws.send("diru");
 });
 
 $("#Up").mouseup(function(){
 	$("#Up").css('background', 'none');
 	ButtonPress("Up");
-	ws.send("diru");
 });
 
 $("#Down").mousedown(function(){
 	$("#Down").css('background', '#323735');
+	ws.send("dird");
 });
 
 $("#Down").mouseup(function(){
 	$("#Down").css('background', 'none');
 	ButtonPress("Down");
-	ws.send("dird");
 });
 
 $("#Left").mousedown(function(){
 	$("#Left").css('background', '#323735');
+	ws.send("dirl")
 });
 
 $("#Left").mouseup(function(){
 	$("#Left").css('background', 'none');
 	ButtonPress("Left");
-	ws.send("dirl")
 });
 
 $("#Right").mousedown(function(){
 	$("#Right").css('background', '#323735');
+	ws.send("dirr")
 });
 
 $("#Right").mouseup(function(){
 	$("#Right").css('background', 'none');
 	ButtonPress("Right");
-	ws.send("dirr")
 });
 
 // Catch all mouseup

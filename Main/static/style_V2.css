@@ -8,44 +8,62 @@ body {
 }
 
 .header {
-  justify-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   width: 100%;
   height: 40px;
   background-color: #c2c2c2;
   font-weight: 600;
   font-size: 20px;
 }
+
 .header > a {
   text-align: center;
   margin-right: 40px;
   margin-left: 16px;
 }
+
 .header > a > span {
   margin-left: 8px;
 }
 
 .main_wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
+
 .main_wrapper > .control_wrapper {
   margin: 8px;
   max-width: 513px;
   max-height: 513px;
   width: 100%;
 }
+
 .main_wrapper > .control_wrapper .colorpicker #color-selector {
   margin: auto;
 }
+
 .main_wrapper > .control_wrapper .colorpicker .button_wrapper {
   width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-content: center;
-  justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   margin: 8px 0;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper {
   color: #d9403b;
   font-family: "Coda Caption", sans-serif;
@@ -56,19 +74,23 @@ body {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper a, .main_wrapper > .control_wrapper .games .wrapper a:hover, .main_wrapper > .control_wrapper .games .wrapper a:focus {
   color: #d9403b;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .controller {
   position: relative;
   background: #d2d2d0;
   margin: 1rem auto;
   width: 30rem;
   height: 14rem;
-  border-radius: 0.25rem;
+  border-radius: .25rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .pad-area {
   position: absolute;
   background: #2b3334;
@@ -76,8 +98,9 @@ body {
   bottom: 1rem;
   width: 28rem;
   height: 10rem;
-  border-radius: 0.25rem;
+  border-radius: .25rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .dpad {
   position: absolute;
   bottom: 1.5rem;
@@ -85,40 +108,47 @@ body {
   width: 6rem;
   height: 6rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .cross {
   position: absolute;
   background: #111113;
-  border-radius: 0.2rem;
+  border-radius: .2rem;
   z-index: 5;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .cross.vert {
   left: 2rem;
   width: 2rem;
   height: 6rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .cross.hor {
   top: 2rem;
   width: 6rem;
   height: 2rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .cross-border {
   position: absolute;
   background: #d3d2ce;
-  border-radius: 0.2rem;
+  border-radius: .2rem;
   z-index: 5;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .cross-border.vert {
-  top: -0.25rem;
+  top: -.25rem;
   left: 1.75rem;
   width: 2.5rem;
   height: 6.5rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .cross-border.hor {
   top: 1.75rem;
-  left: -0.25rem;
+  left: -.25rem;
   width: 6.5rem;
   height: 2.5rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .direction {
   position: absolute;
   background: none;
@@ -126,76 +156,92 @@ body {
   height: 2rem;
   z-index: 10;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper #Up {
   left: 2rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper #Down {
   left: 2rem;
   bottom: 0;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper #Left {
   top: 2rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper #Right {
   top: 2rem;
   right: 0;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .center {
   width: 8rem;
   height: 100%;
   margin: 0 9rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .gray-bar {
   position: relative;
   background: #9a9b96;
   width: 100%;
   height: 1.5rem;
-  border-radius: 0.25rem;
-  margin-bottom: 0.5rem;
+  border-radius: .25rem;
+  margin-bottom: .5rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .gray-bar.first {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .gray-bar.big {
   background: #d3d2ce;
   height: 2.55rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .gray-bar.last {
-  height: 0.925rem;
+  height: .925rem;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .gray-bar span {
-  margin-left: 0.65rem;
-  font-size: 0.75rem;
+  margin-left: .65rem;
+  font-size: .75rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .skinny-button {
   position: absolute;
   background: #323735;
-  top: 0.75rem;
+  top: .75rem;
   width: 3rem;
   height: 1rem;
   border-radius: 2rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .skinny-button.select {
-  left: 0.5rem;
+  left: .5rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .skinny-button.start {
-  right: 0.5rem;
+  right: .5rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .nintendo {
   position: absolute;
   right: 3.5rem;
   top: 1.5rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .nintendo:after {
   content: "®";
   position: absolute;
-  font-size: 0.75rem;
-  top: -0.25rem;
-  right: -0.75rem;
+  font-size: .75rem;
+  top: -.25rem;
+  right: -.75rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .buttons {
   position: absolute;
   right: 1.5rem;
@@ -203,6 +249,7 @@ body {
   width: 8rem;
   height: 3rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .button-pad {
   position: relative;
   float: right;
@@ -210,24 +257,28 @@ body {
   margin-right: 1rem;
   width: 3rem;
   height: 3rem;
-  border-radius: 0.25rem;
+  border-radius: .25rem;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .button {
   background: #e4060b;
   display: block;
   width: 2.5rem;
   height: 2.5rem;
-  margin: 0.25rem auto;
+  margin: .25rem auto;
   border-radius: 50%;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .button-letter {
   position: absolute;
-  font-size: 0.75rem;
+  font-size: .75rem;
   right: 0;
 }
+
 .main_wrapper > .control_wrapper .games .wrapper .controller_out {
   text-align: center;
 }
+
 .main_wrapper > .canvas_wrapper {
   margin: 8px;
   max-width: 513px;
@@ -236,13 +287,16 @@ body {
   position: relative;
   aspect-ratio: auto 1/1;
 }
+
 .main_wrapper > .canvas_wrapper img {
   position: absolute;
   width: 100%;
   height: 100%;
 }
+
 .main_wrapper > .canvas_wrapper canvas {
   position: absolute;
   width: 100%;
   height: 100%;
-}/*# sourceMappingURL=style_V2.css.map */
+}
+/*# sourceMappingURL=style_V2.css.map */
